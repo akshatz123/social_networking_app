@@ -12,6 +12,7 @@
             </div>
             <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
+              <p class="article-image">{{post.image.url }}</p>
           </div>
         </article>
     {% endfor %}
@@ -31,4 +32,4 @@
       		<a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
       	{% endif %}
     {% endif %}
-{% endblock content %}
+{% endblock %}
