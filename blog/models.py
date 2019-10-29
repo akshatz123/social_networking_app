@@ -10,13 +10,19 @@ class Posts(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='media/posts/', null=True)
+    image = models.ImageField(upload_to='posts', blank=True)
 
     def __str__(self):
         return self.title
 
-    def get_absolute_url (self):
+    def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
+
+    @property
+    def photo_url(self):
+
+        if self.photo and hasattr(self.photo, 'url'):
+            return self.photo.url
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -27,3 +33,4 @@ class Posts(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
+

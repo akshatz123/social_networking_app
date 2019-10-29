@@ -16,6 +16,9 @@
       </div>
       <h2 class="article-title">{{ object.title }}</h2>
       <p class="article-content">{{ object.content }}</p>
+      {% if object.image %}
+        <img src="{{ post.photo_url }}">
+      {% endif %}
     </div>
   </article>
-{% endblock content %}
+{% endblock %}
