@@ -10,7 +10,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import Posts
+from .models import *
 
 
 def home(request):
@@ -113,27 +113,27 @@ def my_view(request):
     # List of who this user is following
     following = Following.objects.following(request.user)
 
-    # ### Managing friendship relationships
-    #
-    # # Create a friendship request
-    # other_user = User.objects.get(pk=1)
-    # new_relationship = Friend.objects.add_friend(request.user, other_user)
-    #
-    # # Can optionally save a message when creating friend requests
-    # message_relationship = Friend.objects.add_friend(
-    #     from_user=request.user,
-    #     to_user=some_other_user,
-    #     message='Hi, I would like to be your friend',
-    # )
-    #
-    # # And immediately accept it, normally you would give this option to the user
-    # new_relationship.accept()
-    #
-    # # Now the users are friends
-    # Friend.objects.are_friends(request.user, other_user) == True
-    #
-    # # Remove the friendship
-    # Friend.objects.remove_friend(other_user, request.user)
-    #
-    # # Create request.user follows other_user relationship
-    # following_created = Following.objects.add_follower(request.user, other_user)
+    # Managing friendship relationships
+
+    # Create a friendship request
+    other_user = User.objects.get(pk=1)
+    new_relationship = Friend.objects.add_friend(request.user, other_user)
+
+    # Can optionally save a message when creating friend requests
+    message_relationship = Friend.objects.add_friend(
+        from_user=request.user,
+        to_user=some_other_user,
+        message='Hi, I would like to be your friend',
+    )
+
+    # And immediately accept it, normally you would give this option to the user
+    new_relationship.accept()
+
+    # Now the users are friends
+    Friend.objects.are_friends(request.user, other_user) == True
+
+    # Remove the friendship
+    Friend.objects.remove_friend(other_user, request.user)
+
+    # Create request.user follows other_user relationship
+    following_created = Following.objects.add_follower(request.user, other_user)
