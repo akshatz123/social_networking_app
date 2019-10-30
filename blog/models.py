@@ -1,11 +1,22 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
 from django.core.files.storage import FileSystemStorage
 
 fs = FileSystemStorage(location='media/posts')
+
+
+class User(AbstractUser):
+    email = models.EmailField(max_length=255, unique=True)
+    dateofbirth = models.DateField(auto_now=False, null=True, blank=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return self.email
 
 
 class Posts(models.Model):
@@ -35,4 +46,3 @@ class Posts(models.Model):
             output_size = (300, 300)
             img.thumbnail(output_size)
             img.save(self.image.path)
-

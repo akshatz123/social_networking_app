@@ -1,5 +1,6 @@
+from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from .views import (
     PostListView,
     PostDetailView,
@@ -19,4 +20,5 @@ urlpatterns = [
     path('post/<int:pk>/update', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete', PostDeleteView.as_view(), name='post-delete'),
     path('about/', views.about, name='blog-about'),
+    url(r'^friendship/', include('friendship.urls')),
 ]

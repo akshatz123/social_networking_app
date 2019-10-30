@@ -1,11 +1,13 @@
+from django.contrib.auth import forms
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
+from django_project.settings import AUTH_USER_MODEL as user
 
 
 class Profile(models.Model):
     """docstring for Profile"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = user
     image = models.ImageField(default='default.jpg', upload_to="profile_pics")
 
     def __str__(self):
@@ -24,8 +26,8 @@ class Profile(models.Model):
 
 
 class Friend(models.Model):
-    users = models.ManyToManyField(User)
-    current_user = models.ForeignKey(User, related_name='owner', null=True, on_delete=models.CASCADE)
+    users = models.ManyToManyField(user)
+    current_user = models.ForeignKey(user, related_name='owner', null=True, on_delete=models.CASCADE)
 
 
     @classmethod
