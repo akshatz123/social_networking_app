@@ -1,5 +1,5 @@
-from django.contrib.auth.models import User
-from friendship.models import Friend, Follow
+from django_project.settings import AUTH_USER_MODEL
+from friendship.models import Friend, Follow, Block
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
@@ -10,19 +10,19 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import *
+from .models import Posts
 
 
 def home(request):
     context = {
-        'posts': Posts.objects.all(),
+        'posts': Posts.objects.all()
     }
     return render(request, 'blog/home.html', context)
 
 
 class PostListView(ListView):
     model = Posts
-    template_name = 'blog/home.html'
+    template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     ordering = ['-date_posted']
     paginate_by = 5
@@ -30,7 +30,7 @@ class PostListView(ListView):
 
 class UserPostListView(ListView):
     model = Posts
-    template_name = 'blog/user_posts.html'
+    template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     paginate_by = 5
 
@@ -41,7 +41,6 @@ class UserPostListView(ListView):
 
 class PostDetailView(DetailView):
     model = Posts
-    fields = ['title', 'content', 'image']
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -50,8 +49,6 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        # print(form.instance.author, self.request.user)
-        print(form)
         return super().form_valid(form)
 
 
@@ -82,8 +79,7 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def about(request):
-    return render(request, 'blog/about.html', {'title': 'About', })
-
+    return render(request, 'blog/about.html', {'title': 'About'})
 
 def my_view(request):
     # List of this user's friends

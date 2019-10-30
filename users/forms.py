@@ -2,13 +2,13 @@ from django import forms
 from django.forms import ModelForm
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Profile
 
+from django_project.settings import AUTH_USER_MODEL
+from .models import Profile
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-User = get_user_model()
 
 
 class DateInput(forms.DateInput):
@@ -16,27 +16,26 @@ class DateInput(forms.DateInput):
 
 
 class UserRegisterForm(UserCreationForm):
-    username = forms.EmailField(label='Email Address')
-    password = forms.CharField(widget=forms.PasswordInput)
-    password2 = forms.CharField(widget=forms.PasswordInput)
+    username = forms.CharField(label='Username')
     first_name = forms.CharField(label='First Name')
     last_name = forms.CharField(label='Last Name')
     dateofbirth = forms.DateField(label='Date of birth', widget=DateInput)
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'password', 'password2', 'first_name', 'last_name', 'dateofbirth']
+        fields = ['first_name', 'last_name', 'email', 'dateofbirth']
 
 
 class UserUpdateForm(forms.ModelForm):
-	email = forms.EmailField()
+    email = forms.EmailField()
+    # image = forms.ImageField()
 
-	class Meta:
-		model = User
-		fields = ['username', 'email']
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name']
 
 
 class ProfileUpdateForm(forms.ModelForm):
-	class Meta:
-		model = Profile
-		fields = ['image']
+    class Meta:
+        model = Profile
+        fields = ['image']

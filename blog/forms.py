@@ -9,7 +9,6 @@ class DateInput(forms.DateInput):
 
 
 class UserRegisterForm(UserCreationForm):
-    username = forms.EmailField(label='Email Address')
     password = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
     first_name = forms.CharField(label='First Name')
@@ -18,4 +17,4 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'email', 'password', 'password2', 'first_name', 'last_name', 'dateofbirth']
+        fields = ['email', 'password', 'password2', 'first_name', 'last_name']

@@ -10,7 +10,7 @@ def register(request):
 		form = UserRegisterForm(request.POST)
 		if form.is_valid():
 			form.save()
-			# form.cleaned_data.get('username')
+			form.cleaned_data.get('username')
 			msg = 'Your account is created ! You are now able to login'
 			messages.success(request, msg)
 			return redirect('login')
@@ -22,19 +22,21 @@ def register(request):
 @login_required
 def profile(request):
 	if request.method == 'POST':
-		u_form = UserUpdateForm(request.POST, instance = request.user)
-		p_form = ProfileUpdateForm(request.POST, request.FILES, instance = request.user.profile)
+		u_form = UserUpdateForm(request.POST, instance=request.user)
+		print(u_form)
+		p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+		print(p_form)
 		if u_form.is_valid() and p_form.is_valid():
 			u_form.save()
 			p_form.save()
 			msg = 'Your account has been successfully updated!'
 			messages.success(request, msg)
-			return redirect ('profile')
+			return redirect('profile')
 	else:
-		u_form = UserUpdateForm(instance = request.user)
-		p_form = ProfileUpdateForm(instance = request.user.profile)
+		u_form = UserUpdateForm(instance=request.user)
+		p_form = ProfileUpdateForm(instance=request.user.profile)
 	context = {
 		'u_form': u_form,
 		'p_form': p_form
 	}
-	return render(request, 'users/profile.html', context)
+	return render(request, 'users/profile.html')
