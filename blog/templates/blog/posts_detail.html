@@ -17,7 +17,9 @@
       <h2 class="article-title">{{ object.title }}</h2>
       <p class="article-content">{{ object.content }}</p>
       {% if object.image %}
-        <img src="{{ post.photo_url }}">
+        <img src="{{ object.image_url }}" alt="Post related Image">
+      {% else %}
+      No image posted by user
       {% endif %}
     </div>
   </article>

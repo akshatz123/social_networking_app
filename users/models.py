@@ -1,6 +1,4 @@
-from django.contrib.auth import forms
 from django.db import models
-from django.contrib.auth.models import User
 from PIL import Image
 from django_project.settings import AUTH_USER_MODEL
 
@@ -26,7 +24,7 @@ class Profile(models.Model):
 
 
 class Friend(models.Model):
-    users = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
     current_user = models.ForeignKey(AUTH_USER_MODEL, related_name='owner', null=True, on_delete=models.CASCADE)
 
     @classmethod
@@ -42,4 +40,3 @@ class Friend(models.Model):
             current_user=current_user
         )
         friend.users.remove(new_friend)
-
