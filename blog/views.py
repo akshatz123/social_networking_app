@@ -29,17 +29,6 @@ class PostListView(ListView):
     paginate_by = 5
 
 
-class UserPostListView(ListView):
-    model = Posts
-    template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts'
-    paginate_by = 5
-
-    def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
-        return Posts.objects.filter(author=user).order_by('-date_posted')
-
-
 class PostDetailView(DetailView):
     model = Posts
 

@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
@@ -23,9 +25,10 @@ class User(AbstractUser):
 class Posts(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
-    date_posted = models.DateTimeField(default=timezone.now)
+    date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(storage=fs, null=True, blank=True)
+    date_modified = models.DateTimeField(auto_now=True, blank=True)
 
     def __str__(self):
         return self.title
