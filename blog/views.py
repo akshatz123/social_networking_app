@@ -1,6 +1,6 @@
-from django.http import request
+from django.http import request, HttpResponseRedirect
 from friendship.models import Friend, Follow, Block
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, render_to_response
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.views.generic import (
@@ -10,7 +10,10 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from .models import Posts
+
+from blog.forms import FriendMgmtForm
+from users.models import Profile
+from .models import Posts, FriendMgmt
 from PIL import Image
 
 
@@ -100,23 +103,51 @@ class UserPostListView(ListView):
 #         form1.save()
 #
 
-from django_project.settings import AUTH_USER_MODEL
-from friendship.models import Friend, Follow, Block
-from friendship.models import FriendshipRequest
+# from django_project.settings import AUTH_USER_MODEL
+# from friendship.models import Friend, Follow, Block
+# from friendship.models import FriendshipRequest
 
+#
+# def my_view():
+#     other_user = User.objects.get(pk=1)
+#     Friend.objects.add_friend(
+#         request.AUTH_USER_MODEL,  # The sender
+#         other_user,  # The recipient
+#         message='Hi! I would like to add you')
+#
+#     def make_friend(cls, current_user, new_friend):
+#         try:
+#             friend, created = cls.objects.get_or_create(current_user=current_user)
+#             friend.users.add(new_friend)
+#
+#         except SyntaxError:
+#             pass
 
-def my_view():
-    other_user = User.objects.get(pk=1)
-    Friend.objects.add_friend(
-        request.AUTH_USER_MODEL,  # The sender
-        other_user,  # The recipient
-        message='Hi! I would like to add you')
-
-    def make_friend(cls, current_user, new_friend):
-        try:
-            friend, created = cls.objects.get_or_create(current_user=current_user)
-            friend.users.add(new_friend)
-
-        except SyntaxError:
-            pass
-
+# def my_friends(request):
+#     """
+#         used for Displaying and managing friends
+#     """
+#     if request.method == 'POST':
+#
+#         form = FriendMgmtForm(request.POST)
+#         if form.is_valid():
+#
+#             user = User.objects.get(id=80)
+#             friend_manage = FriendMgmt(user=request.user, friend= user)
+#             friend_manage.save()
+#         return HttpResponseRedirect('myfriends/')
+#
+#     else:
+#         form = PostCreateView()
+#
+#         user = request.user
+#         profile = Profile.objects.get(user=user)
+#         full_name = user.get_full_name()
+#         email = user.email
+#         friends = FriendMgmt.objects.filter(user=request.user)
+#         context = {'form': form,
+#             'full_name': full_name,
+#             'email': email,
+#             'friends': friends
+#            }
+#         return render_to_response('friends.html', context)

@@ -8,11 +8,13 @@ from .views import (
     PostCreateView,
     PostUpdateView,
     PostDeleteView,
-    UserPostListView
+    UserPostListView,
+    my_friends
 )
 from . import views
 
 urlpatterns = [
+    # path('myfriends/', my_friends, name='myfriends'),
     path('', PostListView.as_view(), name='blog-home'),
     path('user/<str:username>', UserPostListView.as_view(), name='user-posts'),
     path('friend_request/', views.my_view, name='friend_request'),
