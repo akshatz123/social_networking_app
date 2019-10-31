@@ -50,3 +50,13 @@ class Posts(models.Model):
     def photo_url(self):
         if self.photo and hasattr(self.photo, 'url'):
             return self.photo.url
+
+
+class Friendship(models.Model):
+    RESPONSE_CHOICES = (
+    ('Inactive', 'Inactive'),
+    ('Active', 'Active'),
+    )
+    response = models.CharField(max_length=10, choices=RESPONSE_CHOICES, default='Inactive')
+    creator = models.ForeignKey(User, related_name="friendship_creator_set", on_delete=models.CASCADE)
+    friend = models.ForeignKey(User, related_name="friend_set", on_delete=models.CASCADE)
