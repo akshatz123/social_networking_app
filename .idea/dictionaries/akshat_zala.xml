@@ -2,6 +2,9 @@
   <dictionary name="akshat.zala">
     <words>
       <w>dateofbirth</w>
+      <w>elif</w>
+      <w>endblock</w>
+      <w>endfor</w>
     </words>
   </dictionary>
 </component>

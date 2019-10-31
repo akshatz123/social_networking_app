@@ -20,6 +20,7 @@ from django.conf import settings
 from users import views as user_views
 from django.contrib.auth import views as auth_views
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', user_views.register, name='register'),
@@ -47,6 +48,7 @@ urlpatterns = [
      name='password_reset_complete'
     ),
     path('', include('blog.urls')),
+    # path('friends/', include('friends.urls'))
 ]
 
 

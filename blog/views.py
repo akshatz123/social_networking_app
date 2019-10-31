@@ -1,4 +1,3 @@
-from django_project.settings import AUTH_USER_MODEL
 from friendship.models import Friend, Follow, Block
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -66,9 +65,9 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             img.thumbnail(output_size)
             img.save(self.image.path)
 
+
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Posts
-    # print(model)
     success_url = '/'
 
     def test_func(self):
@@ -81,13 +80,13 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 def about(request):
     return render(request, 'blog/about.html', {'title': 'About'})
 
+
 def my_view(request):
     # List of this user's friends
     all_friends = Friend.objects.friends(request.user)
 
     # List all unread friendship requests
     requests = Friend.objects.unread_requests(user=request.user)
-
     # List all rejected friendship requests
     rejects = Friend.objects.rejected_requests(user=request.user)
 
@@ -118,7 +117,7 @@ def my_view(request):
     # Can optionally save a message when creating friend requests
     message_relationship = Friend.objects.add_friend(
         from_user=request.user,
-        to_user=some_other_user,
+        to_user=other_user,
         message='Hi, I would like to be your friend',
     )
 
@@ -133,3 +132,14 @@ def my_view(request):
 
     # Create request.user follows other_user relationship
     following_created = Following.objects.add_follower(request.user, other_user)
+
+
+class UserPostListView(ListView):
+    model = Posts
+    template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
+    context_object_name = 'posts'
+    paginate_by = 5
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Posts.objects.filter(author=user).order_by('-date_posted')
