@@ -3,6 +3,8 @@ from .models import Profile
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import models
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class DateInput(forms.DateInput):
@@ -25,16 +27,18 @@ class UserRegisterForm(UserCreationForm):
 
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField()
-    image = forms.ImageField()
+    # image = forms.ImageField()
 
     class Meta:
         model = User
         fields = [
-            'image',
+            'email',
         ]
 
 
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['image']
+        fields = [
+            'image'
+        ]
