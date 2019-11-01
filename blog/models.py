@@ -1,5 +1,5 @@
 import datetime
-
+from friendship.models import Friend
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
@@ -14,6 +14,8 @@ fs = FileSystemStorage(location='media/posts/')
 class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
     dateofbirth = models.DateField(auto_now=False, null=True, blank=True)
+    friend_id = models.OneToOneField(Friend, on_delete=models.CASCADE, null=True)
+    is_superuser = models.BooleanField()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -48,23 +50,13 @@ class Posts(models.Model):
 
     @property
     def photo_url(self):
-        if self.photo and hasattr(self.photo, 'url'):
-            return self.photo.url
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
 
 
-class Friendship(models.Model):
-    RESPONSE_CHOICES = (
-    ('Inactive', 'Inactive'),
-    ('Active', 'Active'),
-    )
-    response = models.CharField(max_length=10, choices=RESPONSE_CHOICES, default='Inactive')
-    creator = models.ForeignKey(User, related_name="friendship_creator_set", on_delete=models.CASCADE)
-    friend = models.ForeignKey(User, related_name="friend_set", on_delete=models.CASCADE)
-
-
-class FriendMgmt(models.Model):
-    """
-        friends table
-    """
-    user = models.ManyToManyField(AUTH_USER_MODEL, related_name='+')
-    friend = models.ForeignKey(AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE)
+class Friends:
+    friend_id = models.IntegerField(primary_key=True)
+    user_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status_flag = models.CharField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
