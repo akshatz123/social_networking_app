@@ -8,7 +8,7 @@ from PIL import Image
 from django.core.files.storage import FileSystemStorage
 from django_project.settings import AUTH_USER_MODEL
 
-fs = FileSystemStorage(location='posts/')
+fs = FileSystemStorage(location='media/posts/')
 
 
 class User(AbstractUser):
@@ -27,7 +27,7 @@ class Posts(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField(storage=fs, null=True, blank=True)
+    image = models.ImageField(storage=fs, blank=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
 
     def __str__(self):
@@ -52,18 +52,19 @@ class Posts(models.Model):
             return self.photo.url
 
 
-# class Friendship(models.Model):
-#     RESPONSE_CHOICES = (
-#     ('Inactive', 'Inactive'),
-#     ('Active', 'Active'),
-#     )
-#     response = models.CharField(max_length=10, choices=RESPONSE_CHOICES, default='Inactive')
-#     creator = models.ForeignKey(User, related_name="friendship_creator_set", on_delete=models.CASCADE)
-#     friend = models.ForeignKey(User, related_name="friend_set", on_delete=models.CASCADE)
+class Friendship(models.Model):
+    RESPONSE_CHOICES = (
+    ('Inactive', 'Inactive'),
+    ('Active', 'Active'),
+    )
+    response = models.CharField(max_length=10, choices=RESPONSE_CHOICES, default='Inactive')
+    creator = models.ForeignKey(User, related_name="friendship_creator_set", on_delete=models.CASCADE)
+    friend = models.ForeignKey(User, related_name="friend_set", on_delete=models.CASCADE)
 
-# class FriendMgmt(models.Model):
-#     """
-#         friends table
-#     """
-#     user = models.ManyToManyField(AUTH_USER_MODEL, related_name='+')
-#     friend = models.ForeignKey(User, related_name="+", on_delete=models.CASCADE)
+
+class FriendMgmt(models.Model):
+    """
+        friends table
+    """
+    user = models.ManyToManyField(AUTH_USER_MODEL, related_name='+')
+    friend = models.ForeignKey(AUTH_USER_MODEL, related_name="+", on_delete=models.CASCADE)

@@ -48,7 +48,7 @@ urlpatterns = [
      name='password_reset_complete'
     ),
     path('', include('blog.urls')),
-    # path('friends/', include('friends.urls'))
+    path('friends/', include('friends.urls'))
 ]
 
 
