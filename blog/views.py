@@ -13,11 +13,12 @@ from .models import Posts
 from PIL import Image
 
 
-def home(request):
-    context = {
-        'posts': Posts.objects.all()
-    }
-    return render(request, 'blog/home.html', context)
+def home(user):
+    if user.is_authenticated:
+        context = {
+            'posts': Posts.objects.all()
+        }
+    return render('blog/home.html', context)
 
 
 class PostListView(ListView):

@@ -16,8 +16,8 @@
       </div>
       <h2 class="article-title">{{ object.title }}</h2>
       <p class="article-content">{{ object.content }}</p>
-      {% if object.image %}
-        <img src="{{ object.image.url }}" alt="Post related Image">
+      {% if object.photo_url %}
+        <img src="{{ object.image }}" alt="Post related Image">
       {% else %}
       {{ pass }}
       {% endif %}

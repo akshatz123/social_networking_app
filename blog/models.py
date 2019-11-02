@@ -1,7 +1,5 @@
 import datetime
-from friendship.models import Friend
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
@@ -11,10 +9,18 @@ from django_project.settings import AUTH_USER_MODEL
 fs = FileSystemStorage(location='media/posts/')
 
 
+class Friend:
+    friend_id = models.IntegerField(primary_key=True)
+    user_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status_flag = models.CharField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+
+
 class User(AbstractUser):
     email = models.EmailField(max_length=255, unique=True)
     dateofbirth = models.DateField(auto_now=False, null=True, blank=True)
-    friend_id = models.OneToOneField(Friend, on_delete=models.CASCADE, null=True)
+    friend_id = models.ManyToManyField('self', Friend)
     is_superuser = models.BooleanField()
 
     USERNAME_FIELD = 'email'
@@ -54,9 +60,10 @@ class Posts(models.Model):
             return self.image.url
 
 
-class Friends:
-    friend_id = models.IntegerField(primary_key=True)
-    user_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    status_flag = models.CharField()
-    date_created = models.DateTimeField(auto_now_add=True)
-    date_modified = models.DateTimeField(auto_now=True)
+class FriendRequest(models.Model):
+    to_user = models.ForeignKey(AUTH_USER_MODEL, related_name='to_user', on_delete=models.CASCADE)
+    from_user = models.ForeignKey(AUTH_USER_MODEL, related_name='from_user', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)  # set when created
+
+    def __str__(self):
+        return "From {}, to {}".format(self.from_user.username, self.to_user.username)
