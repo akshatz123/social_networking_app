@@ -32,20 +32,20 @@
             <div class="navbar-nav">
               {% if user.is_authenticated %}
                 <div class="form-group">
-                    <form action="#" method="GET" value="{{request.GET.q}}">
+                    <form action="#" method="GET"  value="{{request.GET.q}}">
                         <input class="form-control" name="q" value="{{request.GET.q}}" type="text" placeholder="Search" aria-label="Search" />
                     </form>
                  </div>
-                <a class= "nav-item nav-link" href="#">Friends
-                <ul> {% for friend_request in friend_requests %}
-                    <li>{{ friend_request }}</li>
-                    {% endfor %}
-                </ul></a>
+                <a class= "nav-item nav-link" href="#">
+                    <button type="button" class="btn btn-primary">
+                    Notifcations<img src="https://img.icons8.com/carbon-copy/100/000000/appointment-reminders--v1.png" width="15" height="15px">
+                        <span class="badge badge-light">{{notifications}}4</span>
+                        </button>
+                </a>
                 <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
                 <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
                 <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
               {% else %}
-
                 <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
                 <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
               {% endif %}
@@ -69,5 +69,14 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <hr>
+        {% block footer %}
+            <div class="container marketing">
+            <footer>
+                <p class="pull-right"><a href="#top">Back to top</a></p>
+                <p class='small text-muted'>&copy; 2019 Copyright</p>
+            </footer>
+            </div>
+        {% endblock footer %}
 </body>
 </html>

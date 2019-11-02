@@ -48,7 +48,7 @@ def users_list(request):
     context = {
         'users': users
     }
-    return render(request, "accounts/home.html", context)
+    return render(request, "home.html", context)
 
 
 def send_friend_request(request, id):
@@ -99,7 +99,6 @@ def profile_view(request, slug):
     button_status = 'none'
     if p not in request.user.profile.friends.all():
         button_status = 'not_friend'
-
         # if we have sent him a friend request
         if len(FriendRequest.objects.filter(
                 from_user=request.user).filter(to_user=p.user)) == 1:
