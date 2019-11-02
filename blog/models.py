@@ -1,12 +1,10 @@
-import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
 from django.core.files.storage import FileSystemStorage
 from django_project.settings import AUTH_USER_MODEL
-
-fs = FileSystemStorage(location='media/posts/')
+fs = FileSystemStorage(location='posts/')
 
 
 class Friend:
@@ -35,7 +33,7 @@ class Posts(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField(storage=fs, blank=True)
+    image = models.ImageField(storage=fs, blank=True, default='default.jpg')
     date_modified = models.DateTimeField(auto_now=True, blank=True)
 
     def __str__(self):
@@ -58,12 +56,3 @@ class Posts(models.Model):
     def photo_url(self):
         if self.image and hasattr(self.image, 'url'):
             return self.image.url
-
-
-class FriendRequest(models.Model):
-    to_user = models.ForeignKey(AUTH_USER_MODEL, related_name='to_user', on_delete=models.CASCADE)
-    from_user = models.ForeignKey(AUTH_USER_MODEL, related_name='from_user', on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)  # set when created
-
-    def __str__(self):
-        return "From {}, to {}".format(self.from_user.username, self.to_user.username)

@@ -25,20 +25,10 @@ class Profile(models.Model):
             img.save(self.image.path)
 
 
-# class Friend(models.Model):
-#     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     current_user = models.ForeignKey(AUTH_USER_MODEL, related_name='owner', null=True, on_delete=models.CASCADE)
-#
-#     @classmethod
-#     def make_friend(cls, current_user, new_friend):
-#         friend, created = cls.objects.get_or_create(
-#             current_user=current_user
-#         )
-#         friend.users.add(new_friend)
-#
-#     @classmethod
-#     def lose_friend(cls, current_user, new_friend):
-#         friend, created = cls.objects.get_or_create(
-#             current_user=current_user
-#         )
-#         friend.users.remove(new_friend)
+class FriendRequest(models.Model):
+    to_user = models.ForeignKey(AUTH_USER_MODEL, related_name='to_user', on_delete=models.CASCADE)
+    from_user = models.ForeignKey(AUTH_USER_MODEL, related_name='from_user', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True) # set when created
+
+    def __str__(self):
+        return "From {}, to {}".format(self.from_user.username, self.to_user.username)

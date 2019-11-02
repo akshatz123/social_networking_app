@@ -13,6 +13,13 @@
             <p class="article-content">{{ post.content }}</p>
               <p class="article-image">{{ post.photo_url }}</p>
           </div>
+          <ul>
+              {% for user_p in users %}
+		        <li>
+                    <a href="{{ user_p.get_absolute_url }}">{{ user_p }}</a>
+                </li>
+              {% endfor %}
+          </ul>
         </article>
     {% endfor %}
     {% if is_paginated %}

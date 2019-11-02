@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, render_to_response
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.views.generic import (
@@ -15,10 +15,9 @@ from PIL import Image
 
 def home(user):
     if user.is_authenticated:
-        context = {
+        return render('blog/home.html',  {
             'posts': Posts.objects.all()
-        }
-    return render('blog/home.html', context)
+        })
 
 
 class PostListView(ListView):
@@ -28,10 +27,17 @@ class PostListView(ListView):
     ordering = ['-date_posted']
     paginate_by = 5
 
+    def redirect_not_logged_in(user):
+        if not user.is_authenticated:
+            return  redirect('login')
+
 
 class PostDetailView(DetailView):
     model = Posts
 
+    def redirect_not_logged_in(user):
+        if not user.is_authenticated:
+            return  redirect('login')
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Posts
@@ -91,4 +97,5 @@ class UserPostListView(ListView):
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
+
 
