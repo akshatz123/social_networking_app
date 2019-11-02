@@ -18,10 +18,3 @@ class UserRegisterForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ['email', 'password', 'password2', 'first_name', 'last_name']
-
-
-# class FriendMgmtForm(forms.Form):
-#     """
-#         Manages friends connections
-#     """
-#     friend = forms.CharField(max_length=100,required=False)

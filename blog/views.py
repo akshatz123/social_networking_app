@@ -29,7 +29,7 @@ class PostListView(ListView):
 
     def redirect_not_logged_in(user):
         if not user.is_authenticated:
-            return  redirect('login')
+            return redirect('login')
 
 
 class PostDetailView(DetailView):
@@ -39,9 +39,10 @@ class PostDetailView(DetailView):
         if not user.is_authenticated:
             return  redirect('login')
 
+
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Posts
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -50,7 +51,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Posts
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -61,16 +62,6 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user == post.author:
             return True
         return False
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        img = Image.open(self.image.path)
-
-        if img.height > 300 or img.width > 300:
-            output_size = (300, 300)
-            img.thumbnail(output_size)
-            img.save(self.image.path)
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

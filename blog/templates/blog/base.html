@@ -31,6 +31,11 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
+                <div class="form-group">
+                    <form action="#" method="GET" value="{{request.GET.q}}">
+                        <input class="form-control" name="q" value="{{request.GET.q}}" type="text" placeholder="Search" aria-label="Search" />
+                    </form>
+                 </div>
                 <a class= "nav-item nav-link" href="#">Friends
                 <ul> {% for friend_request in friend_requests %}
                     <li>{{ friend_request }}</li>
