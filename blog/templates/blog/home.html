@@ -11,8 +11,7 @@
             </div>
             <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
-              <p class="article-image">{{ post.photo_url }}</p>
-          </div>
+        </div>
           <ul>
               {% for user_p in users %}
 		        <li>
