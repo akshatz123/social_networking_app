@@ -1,7 +1,7 @@
-Django==2.2
+Django==2.2.6
 django-auth-mixins==1.0.1
 django-crispy-forms==1.7.2
 Pillow==6.2.1
 pytz==2019.2
 sqlparse==0.3.0
-django-friendship==1.8.1
+mysqlclient==1.4.4

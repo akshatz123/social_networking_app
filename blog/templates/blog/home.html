@@ -6,17 +6,20 @@
           src="{{ post.author.profile.image.url }}">
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+              <p>{{ post.author }}</p>
               <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
             </div>
             <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
-              <p class="article-image">
-                  {% if image %}
-                    {{ post.image.url }}
-                  {% endif %}
-              </p>
+              <p class="article-image">{{ post.photo_url }}</p>
           </div>
+          <ul>
+              {% for user_p in users %}
+		        <li>
+                    <a href="{{ user_p.get_absolute_url }}">{{ user_p }}</a>
+                </li>
+              {% endfor %}
+          </ul>
         </article>
     {% endfor %}
     {% if is_paginated %}

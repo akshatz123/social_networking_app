@@ -1,30 +1,46 @@
 from django.db import models
-from django.utils import timezone
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
 from django.core.files.storage import FileSystemStorage
+from django_project.settings import AUTH_USER_MODEL
+fs = FileSystemStorage(location='media/posts/')
 
-fs = FileSystemStorage(location='media/posts')
+
+class Friend:
+    friend_id = models.IntegerField(primary_key=True)
+    user_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
+    status_flag = models.CharField()
+    date_created = models.DateTimeField(auto_now_add=True)
+    date_modified = models.DateTimeField(auto_now=True)
+
+
+class User(AbstractUser):
+    email = models.EmailField(max_length=255, unique=True)
+    dateofbirth = models.DateField(auto_now=False, null=True, blank=True)
+    friend_id = models.ManyToManyField('self', Friend)
+    is_superuser = models.BooleanField(default=False)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
+
+    def __str__(self):
+        return self.username
 
 
 class Posts(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
-    date_posted = models.DateTimeField(default=timezone.now)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(storage=fs, null=True)
+    date_posted = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
+    image = models.ImageField(storage=fs, blank=True, default='default.jpg')
+    date_modified = models.DateTimeField(auto_now=True, blank=True)
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
-
-    @property
-    def photo_url(self):
-        if self.photo and hasattr(self.photo, 'url'):
-            return self.photo.url
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -36,3 +52,7 @@ class Posts(models.Model):
             img.thumbnail(output_size)
             img.save(self.image.path)
 
+    @property
+    def photo_url(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url

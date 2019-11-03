@@ -1,12 +1,30 @@
 from django.db import models
-from django.contrib.auth.models import User
 from PIL import Image
+from django.utils.text import slugify
+from django_project.settings import AUTH_USER_MODEL
 
 
 class Profile(models.Model):
     """docstring for Profile"""
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg', upload_to="profile_pics")
+    date_modified = models.DateTimeField(auto_now=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
+    slug = models.SlugField(max_length=250, null=True, blank=True)
+
+    def _get_unique_slug(self):
+        slug = slugify(self.label)
+        unique_slug = slug
+        num = 1
+        while Profile.objects.filter(slug=unique_slug).exists():
+            unique_slug = '{}-{}'.format(slug, num)
+            num += 1
+        return unique_slug
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self._get_unique_slug()
+        super(Profile, self).save(*args, **kwargs)
 
     def __str__(self):
         msg = '{} Profile'.format(self.user.username)
@@ -23,22 +41,11 @@ class Profile(models.Model):
             img.save(self.image.path)
 
 
-class Friend(models.Model):
-    users = models.ManyToManyField(User)
-    current_user = models.ForeignKey(User, related_name='owner', null=True, on_delete=models.CASCADE)
+class FriendRequest(models.Model):
+    to_user = models.ForeignKey(AUTH_USER_MODEL, related_name='to_user', on_delete=models.CASCADE)
+    from_user = models.ForeignKey(AUTH_USER_MODEL, related_name='from_user', on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True) # set when created
 
-
-    @classmethod
-    def make_friend(cls, current_user, new_friend):
-        friend, created = cls.objects.get_or_create(
-            current_user=current_user
-        )
-        friend.users.add(new_friend)
-
-    @classmethod
-    def lose_friend(cls, current_user, new_friend):
-        friend, created = cls.objects.get_or_create(
-            current_user=current_user
-        )
-        friend.users.remove(new_friend)
+    def __str__(self):
+        return "From {}, to {}".format(self.from_user.username, self.to_user.username)
 
