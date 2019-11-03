@@ -13,15 +13,13 @@ class Profile(models.Model):
     image = models.ImageField(default='default.jpg', upload_to="profile_pics", null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
-    # slug = models.SlugField()
 
     def __str__(self):
         return str(self.user.username)
 
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.user)
-        super(Profile, self).save(*args, **kwargs)
-        return "/users/{}".format(self.slug)
+    def __str__(self):
+        msg = '{} Profile'.format(self.user.username)
+        return msg
 
 
 def post_save_user_model_receiver(sender, instance, created, *args, **kwargs):
@@ -35,20 +33,17 @@ def post_save_user_model_receiver(sender, instance, created, *args, **kwargs):
 post_save.connect(post_save_user_model_receiver, sender=AUTH_USER_MODEL)
 
 
-# def __str__(self):
-#     msg = '{} Profile'.format(self.user.username)
-#     return msg
-#
-#
-# def save(self, *args, **kwargs):
-#     super().save(*args, **kwargs)
-#
-#     img = Image.open(self.image.path)
-#
-#     if img.height > 300 or img.width > 300:
-#         output_size = (300, 300)
-#         img.thumbnail(output_size)
-#         img.save(self.image.path)
+
+
+def save(self, *args, **kwargs):
+    super().save(*args, **kwargs)
+
+    img = Image.open(self.image.path)
+
+    if img.height > 300 or img.width > 300:
+        output_size = (300, 300)
+        img.thumbnail(output_size)
+        img.save(self.image.path)
 
 
 class FriendRequest(models.Model):

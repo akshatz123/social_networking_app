@@ -32,7 +32,7 @@
             <div class="navbar-nav">
               {% if user.is_authenticated %}
                 <div class="form-group">
-                    <form action="#" method="GET"  value="{{request.GET.q}}">
+                    <form action="{% url  'friends_search' %}" method="GET"  value="{{request.GET.q}}">
                         <input class="form-control" name="q" value="{{request.GET.q}}" type="text" placeholder="Search" aria-label="Search" />
                     </form>
                  </div>

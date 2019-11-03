@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
@@ -9,6 +10,8 @@ from django.views.generic import (
     DeleteView
 )
 
+from users.forms import UserUpdateForm, ProfileUpdateForm
+from users.models import FriendRequest
 from .models import Posts
 
 
@@ -29,13 +32,13 @@ class PostListView(ListView):
     def home(self):
         from django.http import request
         return render('blog/home.html',  {
-            'posts': Posts.objects.filter(user=author_id
-            )
+            'posts': Posts.objects.filter(user='author_id')
         })
 
 
 class PostDetailView(DetailView):
     model = Posts
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Posts
@@ -85,5 +88,3 @@ class UserPostListView(ListView):
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
-
-
