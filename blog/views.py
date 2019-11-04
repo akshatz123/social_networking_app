@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
@@ -9,14 +10,15 @@ from django.views.generic import (
     DeleteView
 )
 
+from users.forms import UserUpdateForm, ProfileUpdateForm
+from users.models import FriendRequest
 from .models import Posts
-from PIL import Image
 
 
 def home(user):
     if user.is_authenticated:
         return render('blog/home.html',  {
-            'posts': Posts.objects.all()
+            'posts': Posts.objects.filter(author=user)
         })
 
 
@@ -27,22 +29,20 @@ class PostListView(ListView):
     ordering = ['-date_posted']
     paginate_by = 5
 
-    def redirect_not_logged_in(user):
-        if not user.is_authenticated:
-            return redirect('login')
+    def home(self):
+        from django.http import request
+        return render('blog/home.html',  {
+            'posts': Posts.objects.filter(user='author_id')
+        })
 
 
 class PostDetailView(DetailView):
     model = Posts
 
-    def redirect_not_logged_in(user):
-        if not user.is_authenticated:
-            return  redirect('login')
-
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model = Posts
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'image']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -51,7 +51,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Posts
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'image']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -86,7 +86,5 @@ class UserPostListView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        user = get_object_or_404(User, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
-
-

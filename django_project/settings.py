@@ -36,12 +36,13 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'django.contrib.admin',
     'django.contrib.auth',
+    # 'notifications',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    # 'friendship'
+
 ]
 
 
