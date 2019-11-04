@@ -1,7 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.views.generic import (
     ListView,
     DetailView,
@@ -10,34 +10,31 @@ from django.views.generic import (
     DeleteView
 )
 
-from users.forms import UserUpdateForm, ProfileUpdateForm
-from users.models import FriendRequest
+user = get_user_model()
 from .models import Posts
 
 
-def home(user):
+def home():
     if user.is_authenticated:
-        return render('blog/home.html',  {
-            'posts': Posts.objects.filter(author=user)
-        })
+        return render('blog/home.html', {'posts': Posts.objects.filter(author=user)})
 
 
 class PostListView(ListView):
-    model = Posts
-    template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts'
-    ordering = ['-date_posted']
-    paginate_by = 5
-
-    def home(self):
-        from django.http import request
-        return render('blog/home.html',  {
-            'posts': Posts.objects.filter(user='author_id')
-        })
+    if user.is_authenticated:
+        model = Posts
+        template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
+        context_object_name = 'posts'
+        ordering = ['-date_posted']
+        paginate_by = 5
+    else:
+        redirect('/')
 
 
-class PostDetailView(DetailView):
-    model = Posts
+class PostDetailView(DetailView, user):
+    if user.is_authenticated:
+        model = Posts
+    else:
+        redirect('/')
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
