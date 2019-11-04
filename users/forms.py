@@ -1,8 +1,6 @@
-from django.contrib.auth.models import User
 from .models import Profile
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import models
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -27,16 +25,18 @@ class UserRegisterForm(UserCreationForm):
 
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField()
-    # image = forms.ImageField()
+    dateofbirth = forms.DateField(widget=DateInput)
 
     class Meta:
         model = User
         fields = [
             'email',
+            'dateofbirth',
         ]
 
 
 class ProfileUpdateForm(forms.ModelForm):
+
     class Meta:
         model = Profile
         fields = [
