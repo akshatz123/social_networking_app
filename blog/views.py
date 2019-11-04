@@ -1,4 +1,6 @@
-from django.http import HttpResponseRedirect
+# from django.http import request
+#
+from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
@@ -11,35 +13,32 @@ from django.views.generic import (
 )
 
 user = get_user_model()
-from .models import Posts
 
 
-def home():
-    if user.is_authenticated:
-        return render('blog/home.html', {'posts': Posts.objects.filter(author=user)})
+def home_view(request):
+
+    if request.user.is_authenticated:
+        context = {
+            'post': Posts.objects.filter(author=request.user)
+        }
+        # print(context)
+        return render(request, 'blog/home.html', context)
 
 
-class PostListView(ListView):
-    if user.is_authenticated:
-        model = Posts
-        template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
-        context_object_name = 'posts'
-        ordering = ['-date_posted']
-        paginate_by = 5
-    else:
-        redirect('/')
-
-
-class PostDetailView(DetailView, user):
+class PostDetailView(DetailView):
     if user.is_authenticated:
         model = Posts
     else:
         redirect('/')
+
+    def get_queryset(self):
+        return Posts.objects.filter(author=self.request.user)
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
+
+    fields = ['title', 'content']
     model = Posts
-    fields = ['title', 'content', 'image']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -48,7 +47,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Posts
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
