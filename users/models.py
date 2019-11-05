@@ -1,8 +1,5 @@
 from django.db import models
 from PIL import Image
-from django.db.models.signals import post_save
-from django.utils.text import slugify
-
 from django_project.settings import AUTH_USER_MODEL
 
 

@@ -1,4 +1,3 @@
-# from django.http import request
 from django_project.settings import AUTH_USER_MODEL
 from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect

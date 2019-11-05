@@ -4,8 +4,6 @@ from django.urls import reverse
 from PIL import Image
 from django.core.files.storage import FileSystemStorage
 from django_project.settings import AUTH_USER_MODEL
-# fs = FileSystemStorage(location='posts/')
-
 
 class Friend:
     friend_id = models.IntegerField(primary_key=True)
