@@ -127,7 +127,7 @@ def search(request):
             results = User.objects.filter(Q(first_name=query))
             context = {'results': results}
             # print(context)
-            return render(request, 'search.html', context)
+            return render(request, 'users/search.html', context)
         else:
             context = {
                 'results': "Not found",
