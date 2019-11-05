@@ -20,7 +20,6 @@ def home_view(request):
         context = {
             'posts': Posts.objects.filter(author=request.user)
         }
-        # print(context)
         return render(request, 'blog/home.html', context)
 
 
