@@ -1,5 +1,5 @@
 # from django.http import request
-#
+from django_project.settings import AUTH_USER_MODEL
 from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -16,10 +16,9 @@ user = get_user_model()
 
 
 def home_view(request):
-
     if request.user.is_authenticated:
         context = {
-            'post': Posts.objects.filter(author=request.user)
+            'posts': Posts.objects.filter(author=request.user)
         }
         # print(context)
         return render(request, 'blog/home.html', context)
@@ -29,7 +28,7 @@ class PostDetailView(DetailView):
     if user.is_authenticated:
         model = Posts
     else:
-        redirect('/')
+        redirect('blog/')
 
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user)
@@ -37,7 +36,12 @@ class PostDetailView(DetailView):
 
 class PostCreateView(LoginRequiredMixin, CreateView):
 
-    fields = ['title', 'content']
+    """Post form has fields
+        title
+        content
+        image
+    """
+    fields = ['title', 'content', 'image']
     model = Posts
 
     def form_valid(self, form):
@@ -46,8 +50,13 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """Post update form  has fields
+        title
+        content
+        image
+    """
     model = Posts
-    fields = ['title', 'content']
+    fields = ['title', 'content', 'image']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -62,7 +71,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Posts
-    success_url = '/'
+    success_url = '/blog'
 
     def test_func(self):
         post = self.get_object()
@@ -82,5 +91,6 @@ class UserPostListView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('pk'))
+        user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
+
