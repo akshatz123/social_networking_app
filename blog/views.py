@@ -1,7 +1,9 @@
-from django.http import HttpResponseRedirect
+# from django.http import request
+from django_project.settings import AUTH_USER_MODEL
+from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.views.generic import (
     ListView,
     DetailView,
@@ -10,39 +12,37 @@ from django.views.generic import (
     DeleteView
 )
 
-from users.forms import UserUpdateForm, ProfileUpdateForm
-from users.models import FriendRequest
-from .models import Posts
+user = get_user_model()
 
 
-def home(user):
-    if user.is_authenticated:
-        return render('blog/home.html',  {
-            'posts': Posts.objects.filter(author=user)
-        })
-
-
-class PostListView(ListView):
-    model = Posts
-    template_name = 'blog/home.html'  # <app>/<model>_<viewtype>.html
-    context_object_name = 'posts'
-    ordering = ['-date_posted']
-    paginate_by = 5
-
-    def home(self):
-        from django.http import request
-        return render('blog/home.html',  {
-            'posts': Posts.objects.filter(user='author_id')
-        })
+def home_view(request):
+    if request.user.is_authenticated:
+        context = {
+            'posts': Posts.objects.filter(author=request.user)
+        }
+        # print(context)
+        return render(request, 'blog/home.html', context)
 
 
 class PostDetailView(DetailView):
-    model = Posts
+    if user.is_authenticated:
+        model = Posts
+    else:
+        redirect('blog/')
+
+    def get_queryset(self):
+        return Posts.objects.filter(author=self.request.user)
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-    model = Posts
+
+    """Post form has fields
+        title
+        content
+        image
+    """
     fields = ['title', 'content', 'image']
+    model = Posts
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -50,6 +50,11 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    """Post update form  has fields
+        title
+        content
+        image
+    """
     model = Posts
     fields = ['title', 'content', 'image']
 
@@ -66,7 +71,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Posts
-    success_url = '/'
+    success_url = '/blog'
 
     def test_func(self):
         post = self.get_object()
@@ -86,5 +91,6 @@ class UserPostListView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('pk'))
+        user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
+

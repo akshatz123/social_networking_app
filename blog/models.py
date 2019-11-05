@@ -4,7 +4,7 @@ from django.urls import reverse
 from PIL import Image
 from django.core.files.storage import FileSystemStorage
 from django_project.settings import AUTH_USER_MODEL
-fs = FileSystemStorage(location='media/posts/')
+# fs = FileSystemStorage(location='posts/')
 
 
 class Friend:
@@ -16,10 +16,11 @@ class Friend:
 
 
 class User(AbstractUser):
-    email = models.EmailField(max_length=255, unique=True)
+    email = models.EmailField(max_length=255, unique=True, )
     dateofbirth = models.DateField(auto_now=False, null=True, blank=True)
     friend_id = models.ManyToManyField('self', Friend)
     is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -33,7 +34,7 @@ class Posts(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField(storage=fs, blank=True, default='default.jpg')
+    image = models.ImageField(upload_to="profile_pics", default='default.jpg', null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
 
     def __str__(self):

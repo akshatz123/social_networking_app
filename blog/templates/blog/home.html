@@ -6,11 +6,12 @@
           src="{{ post.author.profile.image.url }}">
           <div class="media-body">
             <div class="article-metadata">
-              <p>{{ post.author }}</p>
+              <p>{{ post.author }} </p>
               <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
             </div>
             <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
+              <img src = "{{post.image.url}}"/>
         </div>
           <ul>
               {% for user_p in users %}
@@ -37,4 +38,4 @@
       		<a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
       	{% endif %}
     {% endif %}
-{% endblock content %}
+{% endblock %}
