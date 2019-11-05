@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from datetime import timedelta
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -27,7 +29,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -36,13 +37,11 @@ INSTALLED_APPS = [
     'blog.apps.BlogConfig',
     'django.contrib.admin',
     'django.contrib.auth',
-    # 'notifications',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-
 ]
 
 
@@ -87,7 +86,7 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'project_1',
+        'NAME': 'sample',
         'USER': 'root',
         'PASSWORD': '1234root',
         'HOST': 'localhost',
@@ -151,5 +150,6 @@ EMAIL_HOST_USER = 'akshatzala@gmail.com' # email id
 EMAIL_HOST_PASSWORD = 'zcnezyaolyfgiavr' #password
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_CONFIRMATION_PERIOD_DAYS = 7
 # EMAIL_HOST = 'localhost'
-# EMAIL_PORT = 1025 
+# EMAIL_PORT = 1025
