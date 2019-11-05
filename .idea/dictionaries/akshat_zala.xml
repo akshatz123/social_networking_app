@@ -4,6 +4,8 @@
       <w>dateofbirth</w>
       <w>doctype</w>
       <w>endblock</w>
+      <w>endfor</w>
+      <w>uidb</w>
     </words>
   </dictionary>
 </component>

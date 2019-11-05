@@ -9,7 +9,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views import View
 
-from .tokens import account_activation_token
+from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponseRedirect, HttpResponse
@@ -27,7 +27,7 @@ def register(request):
             user.save()
             current_site = get_current_site(request)
             email_subject = 'Activate Your Account'
-            message = render_to_string('activate_account.html', {
+            message = render_to_string('users/account_activate.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -127,7 +127,7 @@ def search(request):
             results = User.objects.filter(Q(first_name=query))
             context = {'results': results}
             # print(context)
-            return render(request, 'search.html', context)
+            return render(request, 'users/search.html', context)
         else:
             context = {
                 'results': "Not found",
