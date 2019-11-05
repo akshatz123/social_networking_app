@@ -27,7 +27,7 @@ def register(request):
             user.save()
             current_site = get_current_site(request)
             email_subject = 'Activate Your Account'
-            message = render_to_string('activate_account.html', {
+            message = render_to_string('users/account_activate.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
