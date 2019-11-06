@@ -31,7 +31,7 @@ class UserUpdateForm(forms.ModelForm):
         model = User
         fields = [
             'email',
-            'dateofbirth',
+            'dateofbirth'
         ]
 
 
