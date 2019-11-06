@@ -15,9 +15,10 @@ user = get_user_model()
 
 
 def home_view(request):
+    """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
         context = {
-            'posts': Posts.objects.filter(author=request.user)
+            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted')
         }
         return render(request, 'blog/home.html', context)
 
@@ -29,7 +30,7 @@ class PostDetailView(DetailView):
         redirect('blog/')
 
     def get_queryset(self):
-        return Posts.objects.filter(author=self.request.user)
+        return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -87,6 +88,7 @@ class UserPostListView(ListView):
     template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     paginate_by = 5
+    ordering = ['-date_posted']
 
     def get_queryset(self):
         user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))

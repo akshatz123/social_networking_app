@@ -19,7 +19,6 @@ from django.conf.urls.static import static
 from django.conf import settings
 from users import views as user_views
 from django.contrib.auth import views as auth_views
-from blog.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
