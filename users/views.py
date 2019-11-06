@@ -65,46 +65,6 @@ def users_list(request):
     return render(request, "home.html", context)
 
 
-def send_friend_request(request, id):
-    """Send friend Request"""
-    if request.user.is_authenticated:
-        user = get_object_or_404(User, id=id)
-        frequest, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=user)
-        return HttpResponseRedirect('home_view')
-
-
-def cancel_friend_request(request, id):
-    """Cancel friend Request"""
-    if request.user.is_authenticated:
-        user = get_object_or_404(User, id=id)
-        frequest = FriendRequest.objects.filter(
-            from_user=request.user,
-            to_user=user).first()
-        frequest.delete()
-        return HttpResponseRedirect('home_view')
-
-
-def accept_friend_request(request, id):
-    """Accept friend Request"""
-    from_user = get_object_or_404(User, id=id)
-    frequest = FriendRequest.objects.filter(from_user=from_user, to_user=request.user).first()
-    # print(frequest)
-    user1 = frequest.to_user
-    user2 = from_user
-    user1.profile.friends.add(user2.profile)
-    user2.profile.friends.add(user1.profile)
-    frequest.delete()
-    return HttpResponseRedirect('/users/{}'.format(request.user.profile.id))
-
-
-def delete_friend_request(request):
-    """Delete friend Request"""
-    from_user = get_object_or_404(User, id=id)
-    frequest = FriendRequest.objects.filter(from_user=from_user, to_user=request.user).first()
-    frequest.delete()
-    return HttpResponseRedirect('/users/{}'.format(request.user.profile.id))
-
-
 def profile(request):
     """Profile to view the profile"""
     if request.method == 'POST':
