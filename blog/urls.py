@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import (
-home_view,
+    home_view,
     PostDetailView,
     PostCreateView,
     PostUpdateView,
