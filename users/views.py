@@ -44,9 +44,7 @@ def activate_account(request, uidb64, token):
     """Activate the account for the user using token and uid"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
-        # print(uid)
-        user = User.objects.get(pk=uid)
-        # print(user)
+        user = User.objects.get(pk=uid)        
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
@@ -90,21 +88,21 @@ def accept_friend_request(request, id):
     """Accept friend Request"""
     from_user = get_object_or_404(User, id=id)
     frequest = FriendRequest.objects.filter(from_user=from_user, to_user=request.user).first()
-    print(frequest)
+    # print(frequest)
     user1 = frequest.to_user
     user2 = from_user
     user1.profile.friends.add(user2.profile)
     user2.profile.friends.add(user1.profile)
     frequest.delete()
-    return HttpResponseRedirect('/users/{}'.format(request.user.profile.slug))
+    return HttpResponseRedirect('/users/{}'.format(request.user.profile.id))
 
 
-def delete_friend_request(request, id):
+def delete_friend_request(request):
     """Delete friend Request"""
     from_user = get_object_or_404(User, id=id)
     frequest = FriendRequest.objects.filter(from_user=from_user, to_user=request.user).first()
     frequest.delete()
-    return HttpResponseRedirect('/users/{}'.format(request.user.profile.slug))
+    return HttpResponseRedirect('/users/{}'.format(request.user.profile.id))
 
 
 def profile(request):
