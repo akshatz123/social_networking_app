@@ -3,8 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
 from django_project.settings import AUTH_USER_MODEL
-from friendship.models import Friend, Follow, Block
+# from friendship.models import Friend, Follow, Block
 import uuid
+
 
 class User(AbstractUser):
     """
@@ -14,7 +15,7 @@ class User(AbstractUser):
     """
     email = models.EmailField(max_length=255, unique=True)
     dateofbirth = models.DateField(null=True)
-    friend_id = models.ManyToManyField('self', Friend)
+    # friend_id = models.ManyToManyField('self')
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
@@ -34,12 +35,11 @@ class Posts(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    friend_id = models.ForeignKey(Friend, on_delete=models.CASCADE, null=True)
     image = models.ImageField(upload_to="profile_pics", default='default.jpg', null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     video = models.FileField(upload_to='videos/', null=True, verbose_name="Video")
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
-    post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     def __str__(self):
         return self.title

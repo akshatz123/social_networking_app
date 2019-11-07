@@ -103,6 +103,16 @@ class UserPostListView(ListView):
 
 
 def like_post(request):
-    post = get_object_or_404(Posts, id=request.Post.get('post.id'))
+    post = get_object_or_404(Posts, id=request.Post.get('post_id'))
     post.likes.add(request.user)
     return HttpResponseRedirect(post.get_absolute_url())
+
+
+class PostDetailView(DetailView):
+    if user.is_authenticated:
+        model = Posts
+    else:
+        redirect('blog/')
+
+    def get_queryset(self):
+        return Posts.objects.filter(author=self.request.user).order_by('date_posted')
