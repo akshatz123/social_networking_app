@@ -1,3 +1,7 @@
+import random
+
+from django.http import HttpResponseRedirect
+
 from django_project.settings import AUTH_USER_MODEL
 from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect
@@ -36,12 +40,11 @@ class PostDetailView(DetailView):
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-
     """Post form has fields
         title
         content
         image
-        videofile
+        video
     """
     fields = ['title', 'content', 'image', 'video']
     model = Posts
@@ -56,7 +59,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         title
         content
         image
-        videofile
+        video
     """
     model = Posts
     fields = ['title', 'content', 'image', 'video']
@@ -99,17 +102,7 @@ class UserPostListView(ListView):
         return Posts.objects.filter(author=user).order_by('-date_posted')
 
 
-def showvideo(request):
-    lastvideo = Posts.objects.get(video='video')
-    print(lastvideo)
-    video = lastvideo.video
-    print(video)
-    form = Posts(request.POST or None, request.FILES or None)
-    if form.is_valid():
-        form.save()
-
-    context = {'video': video,
-               'form': form
-               }
-
-    return render(request, 'blog/home.html', context)
+def like_post(request):
+    post = get_object_or_404(Posts, id=request.Post.get('post.id'))
+    post.likes.add(request.user)
+    return HttpResponseRedirect(post.get_absolute_url())
