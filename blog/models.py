@@ -28,7 +28,7 @@ class User(AbstractUser):
 
 class Posts(models.Model):
     """
-    Post has title, content, image and author fields which are visible to user.
+    Post has title, content, image, video and author fields which are visible to user.
     """
 
     title = models.CharField(max_length=100)
@@ -37,7 +37,7 @@ class Posts(models.Model):
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="profile_pics", default='default.jpg', null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
-    video = models.FileField(upload_to='videos/', null=True, verbose_name="Video")
+    video = models.FileField(upload_to='', null=True, verbose_name="Video")
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
@@ -61,3 +61,18 @@ class Posts(models.Model):
     def photo_url(self):
         if self.image and hasattr(self.image, 'url'):
             return self.image.url
+
+
+class Comment(models.Model):
+    post = models.ForeignKey('Posts', on_delete=models.CASCADE, related_name='comments')
+    author = models.CharField(max_length=200)
+    text = models.TextField()
+    created_date = models.DateTimeField(auto_now_add=True)
+    approved_comment = models.BooleanField(default=False)
+
+    def approve(self):
+        self.approved_comment = True
+        self.save()
+
+    def __str__(self):
+        return self.text

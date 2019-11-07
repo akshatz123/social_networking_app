@@ -10,14 +10,16 @@
         {% if object.author == user %}
         <div>
           <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id  %}">Update</a>
-         <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id  %}">Delete</a>
-         </div>
+          <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id  %}">Delete</a>
+          <button type="submit" name="object.id" value="{{post_id}}" class="btn btn-primary">Like</button>
+        </div>
         {% endif %}
-        <button type="submit" name="object.id" value="{{post_id}}" class="btn btn-primary">Like</button>
-      </div>
+        </div>
         <h2 class="article-title">{{ object.title }}</h2>
         <p class="article-content">{{ object.content }}</p>
+      {% if object.image %}
         <img src = "{{object.image.url}}"/>
+      {% endif %}
       </div>
   </article>
 {% endblock %}

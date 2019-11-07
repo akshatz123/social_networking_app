@@ -17,13 +17,13 @@
                 <img src = "{{post.image.url}}"/>
               <p></p>
               <video width='400' controls autoplay >
-                  <source src="{{media}}{{videos}}" type='video/mp4'/>
+                  <source src="{{media}}{{video.url}}" type='video/mp4'/>
               </video>
               {% elif post.image.url %}
                   <img src="{{post.image.url}}">
               {% elif post.video %}
                   <video width='400' controls autoplay >
-                      <source src="{{media}}{{videos}}" type='video/mp4'/>
+                      <source src="{{media}}{{video}}/+ *.mp4" type='video/mp4'/>
                   </video>
               {% endif%}
           </div>
@@ -41,7 +41,6 @@
         <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
       {% endif %}
-
       {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
           <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
@@ -49,11 +48,9 @@
           <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
         {% endif %}
       {% endfor %}
-
-      {% if page_obj.has_next %}
+    {% if page_obj.has_next %}
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
       {% endif %}
-
     {% endif %}
 {% endblock %}
