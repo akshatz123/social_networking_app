@@ -89,11 +89,15 @@ def search(request):
         if query is not None:
             results = User.objects.filter(Q(first_name=query))
             context = {'results': results}
-            return render(request, 'search.html', context)
+            return render(request, 'users/search.html', context)
         else:
             context = {
                 'results': "Not found",
                       }
-            return redirect(request, 'search.html', context)
+            return redirect(request, 'users/search.html', context)
     else:
         return render(request, 'base.html')
+
+
+def search_profile(request):
+    return render(request, 'users/search_profile.html', {})

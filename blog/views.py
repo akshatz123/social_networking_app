@@ -10,6 +10,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+from django_project.settings import MEDIA_ROOT
 
 user = get_user_model()
 
@@ -18,7 +19,8 @@ def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
         context = {
-            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted')
+            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
+            'media': MEDIA_ROOT
         }
         return render(request, 'blog/home.html', context)
 
@@ -39,8 +41,9 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         title
         content
         image
+        videofile
     """
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content', 'image', 'video']
     model = Posts
 
     def form_valid(self, form):
@@ -53,9 +56,10 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         title
         content
         image
+        videofile
     """
     model = Posts
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content', 'image', 'video']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -94,3 +98,18 @@ class UserPostListView(ListView):
         user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
 
+
+def showvideo(request):
+    lastvideo = Posts.objects.get(video='video')
+    print(lastvideo)
+    video = lastvideo.video
+    print(video)
+    form = Posts(request.POST or None, request.FILES or None)
+    if form.is_valid():
+        form.save()
+
+    context = {'video': video,
+               'form': form
+               }
+
+    return render(request, 'blog/home.html', context)

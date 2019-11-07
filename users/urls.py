@@ -8,4 +8,5 @@ urlpatterns = [
     path('profile/', profile, name='profile'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         activate_account, name='activate'),
+    path('profile/<int:pk>', search_profile, name='profile_search')
 ]
