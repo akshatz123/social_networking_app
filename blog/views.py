@@ -10,7 +10,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
-from django_project.settings import MEDIA_ROOT
+from django_project.settings import MEDIA_URL
 
 user = get_user_model()
 
@@ -20,7 +20,7 @@ def home_view(request):
     if request.user.is_authenticated:
         context = {
             'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
-            'media': MEDIA_ROOT
+            'media': MEDIA_URL
         }
         return render(request, 'blog/home.html', context)
 

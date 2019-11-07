@@ -11,12 +11,19 @@
             </div>
             <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
-              <img src = "{{post.image.url}}"/>
+              {% if post.image.url and post.video %}
+                <img src = "{{post.image.url}}"/>
               <p></p>
               <video width='400' controls autoplay >
-                <source src="{{media}}/videos/Sample.mp4" type='video/mp4'> </source>
-<!--                Your browser does not support the video tag.-->
+                  <source src="{{media}}sample.mp4" type='video/mp4'/>
               </video>
+              {% elif post.image.url %}
+                  <img src="{{post.image.url}}">
+              {% elif post.video %}
+                  <video width='400' controls autoplay >
+                      <source src="{{media}}" type='video/mp4'/>
+                  </video>
+              {% endif%}
         </div>
           <ul>
               {% for user_p in users %}
