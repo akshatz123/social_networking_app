@@ -4,7 +4,7 @@ from django.urls import reverse
 from PIL import Image
 from django_project.settings import AUTH_USER_MODEL
 from friendship.models import Friend, Follow, Block
-
+import uuid
 
 class User(AbstractUser):
     """
@@ -39,7 +39,7 @@ class Posts(models.Model):
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     video = models.FileField(upload_to='videos/', null=True, verbose_name="Video")
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
-    # post_id = models.UUIDField(primary_key=True, blank=True)
+    post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 
     def __str__(self):
         return self.title
