@@ -11,6 +11,7 @@
               <p>{{ post.author }} </p>
               <small class="text-muted">{{ post.date_posted}}</small>
             </div>
+
             <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
               {% if post.image.url and post.video %}
@@ -22,8 +23,8 @@
               {% elif post.image.url %}
                   <img src="{{post.image.url}}">
               {% elif post.video %}
-                  <video width='400' controls autoplay >
-                      <source src="{{media}}{{video}}/+ *.mp4" type='video/mp4'/>
+                  <video controls autoplay >
+                      <source src="{{media}}{{video}}+ *.mp4" type='video/mp4'/>
                   </video>
               {% endif%}
           </div>

@@ -21,4 +21,5 @@ urlpatterns = [
     path('post/P<pk>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/$', PostDeleteView.as_view(), name='post-delete'),
     path('about/', about, name='blog-about'),
     url('likes/', like_post, name='likes_post'),
+    # path('drafts/', /post_draft_list, name='post_draft_list'),
 ]

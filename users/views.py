@@ -11,7 +11,7 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from users.models import Profile, FriendRequest
+from users.models import Profile
 User = get_user_model()
 
 

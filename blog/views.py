@@ -116,3 +116,8 @@ class PostDetailView(DetailView):
 
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
+
+
+# def post_draft_list(request):
+#     posts = Posts.objects.filter(published_date__isnull=True).order_by('created_date')
+#     return render(request, 'blog/post_draft_list.html', {'posts': posts})
