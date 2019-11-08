@@ -53,6 +53,7 @@ class Posts(models.Model):
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     video = models.FileField(upload_to='', null=True, verbose_name="Video")
     uuid = models.UUIDField(default=uuid.uuid4, blank=True, primary_key=True)
+    likes = models.ManyToManyField(User, related_name='likes', blank=True)
 
     def __str__(self):
         return self.title
@@ -74,3 +75,5 @@ class Posts(models.Model):
     def photo_url(self):
         if self.image and hasattr(self.image, 'url'):
             return self.image.url
+
+
