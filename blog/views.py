@@ -1,4 +1,5 @@
-# from django.http import request
+from django.http import HttpResponseRedirect
+
 from django_project.settings import AUTH_USER_MODEL
 from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect
@@ -11,16 +12,18 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+from django_project.settings import MEDIA_URL
 
 user = get_user_model()
 
 
 def home_view(request):
+    """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
         context = {
-            'posts': Posts.objects.filter(author=request.user)
+            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
+            'media': MEDIA_URL
         }
-        # print(context)
         return render(request, 'blog/home.html', context)
 
 
@@ -28,10 +31,10 @@ class PostDetailView(DetailView):
     if user.is_authenticated:
         model = Posts
     else:
-        redirect('blog/')
+        redirect('/')
 
     def get_queryset(self):
-        return Posts.objects.filter(author=self.request.user)
+        return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
@@ -40,8 +43,9 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         title
         content
         image
+        videofile
     """
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content', 'image', 'video']
     model = Posts
 
     def form_valid(self, form):
@@ -54,9 +58,10 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         title
         content
         image
+        videofile
     """
     model = Posts
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content', 'image', 'video']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -71,7 +76,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Posts
-    success_url = '/blog'
+    success_url = '/blog/'
 
     def test_func(self):
         post = self.get_object()
@@ -89,8 +94,14 @@ class UserPostListView(ListView):
     template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
     paginate_by = 5
+    ordering = ['-date_posted']
 
     def get_queryset(self):
         user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
 
+
+def like_post(request):
+    post = get_object_or_404(Posts, id=request.Post.get('post_id'))
+    post.likes.add(request.user)
+    return HttpResponseRedirect(post.get_absolute_url())

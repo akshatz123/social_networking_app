@@ -2,12 +2,19 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
-from django.core.files.storage import FileSystemStorage
 from django_project.settings import AUTH_USER_MODEL
-# fs = FileSystemStorage(location='posts/')
-
+import uuid
 
 class Friend:
+
+    """
+    Model Friend:
+    FriendID as primary key
+    user_id as foreign key
+    status flag for accepting, rejecting the friend requests and null =True, when user is created
+    Date created will be automatically added as friend request is send by other user
+    Date modified will be automatically be added when friend request is accepted or cancelled
+    """
     friend_id = models.IntegerField(primary_key=True)
     user_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     status_flag = models.CharField()
@@ -16,8 +23,13 @@ class Friend:
 
 
 class User(AbstractUser):
-    email = models.EmailField(max_length=255, unique=True, )
-    dateofbirth = models.DateField(auto_now=False, null=True, blank=True)
+    """
+    Custom User model will be having user id as primary key, first_name, last_name and username
+    will be imported from AbstractUser model
+    Date of birth for entering date of birth
+    """
+    email = models.EmailField(max_length=255, unique=True)
+    dateofbirth = models.DateField(null=True)
     friend_id = models.ManyToManyField('self', Friend)
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -30,12 +42,18 @@ class User(AbstractUser):
 
 
 class Posts(models.Model):
+    """
+    Post has title, content, image and author fields which are visible to user.
+    """
     title = models.CharField(max_length=100)
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="profile_pics", default='default.jpg', null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
+    video = models.FileField(upload_to='videos/', null=True, verbose_name="Video")
+    uuid = models.UUIDField(default=uuid.uuid4, blank=True, primary_key=True)
+    likes = models.ManyToManyField(User, related_name='likes', blank=True)
 
     def __str__(self):
         return self.title
@@ -57,3 +75,5 @@ class Posts(models.Model):
     def photo_url(self):
         if self.image and hasattr(self.image, 'url'):
             return self.image.url
+
+
