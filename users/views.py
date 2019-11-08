@@ -43,8 +43,8 @@ def register(request):
 def activate_account(request, uidb64, token):
     """Activate the account for the user using token and uid"""
     try:
-        uid = force_bytes(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)        
+        uuid = force_bytes(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uuid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):

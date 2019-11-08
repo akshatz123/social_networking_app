@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
 from django_project.settings import AUTH_USER_MODEL
+import uuid
 
 
 class Friend:
@@ -52,6 +53,7 @@ class Posts(models.Model):
     image = models.ImageField(upload_to="profile_pics", default='default.jpg', null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     video = models.FileField(upload_to='', null=True, verbose_name="Video")
+    uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
 
     def __str__(self):
         return self.title
