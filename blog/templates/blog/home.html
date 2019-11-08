@@ -1,8 +1,10 @@
 {% extends "blog/base.html" %}
+
+
 {% block content %}
     {% for post in posts %}
         <article class="media content-section">
-          <img class="rounded-circle article-img" 
+          <img class="rounded-circle article-img"
           src="{{ post.author.profile.image.url }}">
           <div class="media-body">
             <div class="article-metadata">
@@ -15,16 +17,16 @@
                 <img src = "{{post.image.url}}"/>
               <p></p>
               <video width='400' controls autoplay >
-                  <source src="{{media}}/{{videos}}{{post.video}}" type='video/mp4'/>
+                  <source src="{{media}}/videos/{{post.video}}" type='video/mp4'/>
               </video>
               {% elif post.image.url %}
                   <img src="{{post.image.url}}">
               {% elif post.video %}
                   <video width='400' controls autoplay >
-                      <source src="{{media}}" type='video/mp4'/>
+                      <source src="{{media}}{{videos}}" type='video/mp4'/>
                   </video>
               {% endif%}
-        </div>
+          </div>
           <ul>
               {% for user_p in users %}
 		        <li>
