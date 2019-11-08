@@ -17,13 +17,13 @@
                 <img src = "{{post.image.url}}"/>
               <p></p>
               <video width='400' controls autoplay >
-                  <source src="{{media}}/videos/{{post.video}}" type='video/mp4'/>
+                  <source src="{{media}}/{{post.video}}" type='video/mp4'/>
               </video>
               {% elif post.image.url %}
                   <img src="{{post.image.url}}">
               {% elif post.video %}
                   <video width='400' controls autoplay >
-                      <source src="{{media}}{{videos}}" type='video/mp4'/>
+                      <source src="{{media}}videos/{{post.video}}" type='video/mp4'/>
                   </video>
               {% endif%}
           </div>

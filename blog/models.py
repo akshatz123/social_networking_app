@@ -51,7 +51,7 @@ class Posts(models.Model):
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="profile_pics", default='default.jpg', null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
-    video = models.FileField(upload_to='', null=True, verbose_name="Video")
+    video = models.FileField(upload_to='videos/', null=True, verbose_name="Video")
     uuid = models.UUIDField(default=uuid.uuid4, blank=True, primary_key=True)
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
 
