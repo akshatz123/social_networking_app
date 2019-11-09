@@ -38,7 +38,9 @@ class UserUpdateForm(forms.ModelForm):
         model = User
         fields = [
             'email',
-            'dateofbirth'
+            'dateofbirth',
+            'first_name',
+            'last_name'
         ]
 def past(value):
     if value > date.today():
