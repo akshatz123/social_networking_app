@@ -1,3 +1,7 @@
+import random
+
+from django.http import HttpResponseRedirect
+
 from django_project.settings import AUTH_USER_MODEL
 from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect
@@ -10,6 +14,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView
 )
+from django_project.settings import MEDIA_URL
 
 user = get_user_model()
 
@@ -18,7 +23,8 @@ def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
         context = {
-            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted')
+            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
+            'media': MEDIA_URL
         }
         return render(request, 'blog/home.html', context)
 
@@ -34,13 +40,13 @@ class PostDetailView(DetailView):
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-
     """Post form has fields
         title
         content
         image
+        video
     """
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content', 'image', 'video']
     model = Posts
 
     def form_valid(self, form):
@@ -53,9 +59,10 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         title
         content
         image
+        video
     """
     model = Posts
-    fields = ['title', 'content', 'image']
+    fields = ['title', 'content', 'image', 'video']
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -94,3 +101,34 @@ class UserPostListView(ListView):
         user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
 
+
+def like_post(request):
+    post = get_object_or_404(Posts, id=request.Post.get('post_id'))
+    post.likes.add(request.user)
+    return HttpResponseRedirect(post.get_absolute_url())
+
+
+class PostDetailView(DetailView):
+    if user.is_authenticated:
+        model = Posts
+    else:
+        redirect('blog/')
+
+    def get_queryset(self):
+        return Posts.objects.filter(author=self.request.user).order_by('date_posted')
+
+    # parent_obj = None
+    # try:
+    #     parent_id = int(request.POST.get("parent_id"))
+    # except:
+    #     parent_id = None
+    #
+    # if parent_id:
+    #     parent_qs = Comment.objects.filter(id=parent_id)
+    #     if parent_qs.exists() and parent_qs.count() == 1:
+    #         parent_obj = parent_qs.first()
+
+
+def post_draft_list(request):
+    posts = Posts.objects.filter(published_date__isnull=True).order_by('created_date')
+    return render(request, 'blog/post_draft_list.html', {'posts': posts})

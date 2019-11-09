@@ -11,7 +11,7 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
-from users.models import Profile, FriendRequest
+from users.models import Profile
 User = get_user_model()
 
 
@@ -65,46 +65,6 @@ def users_list(request):
     return render(request, "home.html", context)
 
 
-def send_friend_request(request, id):
-    """Send friend Request"""
-    if request.user.is_authenticated:
-        user = get_object_or_404(User, id=id)
-        frequest, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=user)
-        return HttpResponseRedirect('home_view')
-
-
-def cancel_friend_request(request, id):
-    """Cancel friend Request"""
-    if request.user.is_authenticated:
-        user = get_object_or_404(User, id=id)
-        frequest = FriendRequest.objects.filter(
-            from_user=request.user,
-            to_user=user).first()
-        frequest.delete()
-        return HttpResponseRedirect('home_view')
-
-
-def accept_friend_request(request, id):
-    """Accept friend Request"""
-    from_user = get_object_or_404(User, id=id)
-    frequest = FriendRequest.objects.filter(from_user=from_user, to_user=request.user).first()
-    # print(frequest)
-    user1 = frequest.to_user
-    user2 = from_user
-    user1.profile.friends.add(user2.profile)
-    user2.profile.friends.add(user1.profile)
-    frequest.delete()
-    return HttpResponseRedirect('/users/{}'.format(request.user.profile.id))
-
-
-def delete_friend_request(request):
-    """Delete friend Request"""
-    from_user = get_object_or_404(User, id=id)
-    frequest = FriendRequest.objects.filter(from_user=from_user, to_user=request.user).first()
-    frequest.delete()
-    return HttpResponseRedirect('/users/{}'.format(request.user.profile.id))
-
-
 def profile(request):
     """Profile to view the profile"""
     if request.method == 'POST':
@@ -128,12 +88,31 @@ def search(request):
         query = request.GET.get('q')
         if query is not None:
             results = User.objects.filter(Q(first_name=query))
-            context = {'results': results}
-            return render(request, 'search.html', context)
+            return render(request, 'users/search.html', { 'results': results } )
         else:
             context = {
                 'results': "Not found",
                       }
-            return redirect(request, 'search.html', context)
+            return render(request, 'users/search.html', context)
     else:
         return render(request, 'base.html')
+
+
+def search_profile(request):
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            msg = 'Your account has been successfully updated!'
+            messages.success(request, msg)
+            return render(request,'users/profile.html', {'u_form':u_form, 'p_form':p_form})
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user)
+        context={
+            'u_form':u_form,
+            'p_form':p_form
+        }
+        return render(request, 'users/search_profile.html',context)

@@ -12,6 +12,7 @@ class Profile(models.Model):
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     dateofbirth = models.DateField(null=True)
 
+
     def __str__(self):
         return str(self.user.username)
 
@@ -29,18 +30,3 @@ def save(self, *args, **kwargs):
         output_size = (300, 300)
         img.thumbnail(output_size)
         img.save(self.image.path)
-
-
-class FriendRequest(models.Model):
-    """Model has 3 fields:
-    sending to user
-    recieve form user
-    and timestamp
-    """
-    to_user = models.ForeignKey(AUTH_USER_MODEL, related_name='to_user', on_delete=models.CASCADE)
-    from_user = models.ForeignKey(AUTH_USER_MODEL, related_name='from_user', on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return "From {}, to {}".format(self.from_user.username, self.to_user.username)
-
