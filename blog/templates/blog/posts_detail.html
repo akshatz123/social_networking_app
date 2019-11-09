@@ -18,7 +18,7 @@
         <h2 class="article-title">{{ object.title }}</h2>
         <p class="article-content">{{ object.content }}</p>
       {% if object.image %}
-        <img src = "{{object.image.url}}"/>
+        <img src = "{{object.image.url}}" alt="No image found"/>
       {% endif %}
       </div>
   </article>

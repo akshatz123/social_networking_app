@@ -117,6 +117,17 @@ class PostDetailView(DetailView):
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
+    # parent_obj = None
+    # try:
+    #     parent_id = int(request.POST.get("parent_id"))
+    # except:
+    #     parent_id = None
+    #
+    # if parent_id:
+    #     parent_qs = Comment.objects.filter(id=parent_id)
+    #     if parent_qs.exists() and parent_qs.count() == 1:
+    #         parent_obj = parent_qs.first()
+
 
 def post_draft_list(request):
     posts = Posts.objects.filter(published_date__isnull=True).order_by('created_date')

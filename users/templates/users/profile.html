@@ -7,9 +7,6 @@
         <div class="media-body">
           <h2 class="account-heading">{{ user.username }}</h2>
             <p class="text-secondary">{{ user.email }}</p>
-            {% if '/profile/<int:pk>' in request.path %}
-            <button type="button" class="btn btn-primary">Add Friend</button>
-            {% endif %}
         </div>
       </div>
      <form method="POST" enctype="multipart/form-data">
@@ -22,7 +19,7 @@
       <div class="form-group">
         <button class="btn btn-outline-info" type="Submit">
         	Update
-		</button>
+		</button>{% if 'profile/<int:id>' in request.path %}<button type="button" class="btn btn-primary">Add Friend</button>{% endif %}
       </div>
     </form>
 	</div>

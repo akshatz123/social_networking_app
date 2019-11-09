@@ -3,11 +3,10 @@
 {% block content %}
     <div class="content-section">
       <div class="media">
-        <img class="rounded-circle account-img" src="{{ user.profile.image.url }}" alt="Profile Picture">
+        <img class="rounded-circle account-img" src="{{ results.profile.image.url }}" alt="Profile Picture">
         <div class="media-body">
           <h2 class="account-heading">{{ result.username }}</h2>
             <p class="text-secondary">{{ result.email }}</p>
-            <button type="button" class="btn btn-primary">Add Friend</button>
         </div>
       </div>
      <form method="POST" enctype="multipart/form-data">
@@ -21,6 +20,7 @@
         <button class="btn btn-outline-info" type="Submit">
         	Update
 		</button>
+        <button type="button" class="btn btn-primary">Add Friend</button>
       </div>
     </form>
 	</div>
