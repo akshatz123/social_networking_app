@@ -11,18 +11,20 @@
             </div>
             <h2><a class="article-title" href="{% url 'post-detail' post.uuid %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
-              {% if post.image.url and post.video %}
+              {% if post.image and post.video %}
               <img src="{{post.image.url}}">
               <p></p>
               <video width='400' controls autoplay >
                   <source src="{{media}}/{{post.video}}" type='video/mp4'/>
               </video>
-              {% elif post.image.url %}
+              {% elif post.image %}
                   <img src="{{post.image.url}}">
               {% elif post.video %}
                   <video width='400' controls autoplay >
                       <source src="{{media}}/{{post.video}}" type='video/mp4'/>
                   </video>
+              {% else %}
+              {{pass}}
               {% endif%}
         </div>
           <ul>

@@ -1,7 +1,11 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
+
+from django_project import settings
 from django_project.settings import AUTH_USER_MODEL
 import uuid
 
@@ -50,9 +54,10 @@ class Posts(models.Model):
     content = models.TextField()
     date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="profile_pics", default='default.jpg', null=True)
+    image = models.ImageField(upload_to="profile_pics", blank=True, null=True, default='')
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     video = models.FileField(upload_to='', null=True, verbose_name="Video")
+    likes = models.ManyToManyField(User, related_name='likes', blank=True)
     uuid = models.UUIDField(default=uuid.uuid4, primary_key=True)
 
     def __str__(self):
@@ -75,3 +80,27 @@ class Posts(models.Model):
     def photo_url(self):
         if self.image and hasattr(self.image, 'url'):
             return self.image.url
+
+
+class Like(models.Model):
+    user = models.ForeignKey(getattr(settings, 'AUTH_USER_MODEL', 'auth.User'), on_delete=models.CASCADE)
+    target_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    target_object_id = models.PositiveIntegerField()
+    target = GenericForeignKey('target_content_type', 'target_object_id')
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ["-timestamp"]
+        get_latest_by = "timestamp"
+        unique_together = ("user", "target_content_type", "target_object_id")
+        verbose_name = "like"
+        verbose_name_plural ="likes"
+
+    def __str__(self):
+        return u"{} liked {}".format(self.user, self.target)
+
+class Comment(models.Model):
+    user = models.ForeignKey(AUTH_USER_MODEL, default=1)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
