@@ -7,7 +7,9 @@
 <h1>Results for {{request.GET.q}} </h1>
 {% for result in results %}
 <br/>
-Name: <a href="{{result.first_name}}">{{ result.first_name }}</a>
+Name: {{ result.first_name }} {{result.last_name}}</a>
+<p>User Id: {{result.id}}</p>
+<p>Click on <u><a href="{% url 'profile' result.id %}">{{result.first_name}}'s  profile</a></u></p>
 {% endfor %}
 {% else %}
 No search results for this query

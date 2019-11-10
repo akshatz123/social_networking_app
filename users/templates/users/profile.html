@@ -6,7 +6,7 @@
         <img class="rounded-circle account-img" src="{{ user.profile.image.url }}" alt="Profile Picture">
         <div class="media-body">
           <h2 class="account-heading">{{ user.username }}</h2>
-          <p class="text-secondary">{{ user.email }}</p>
+            <p class="text-secondary">{{ user.email }}</p>
         </div>
       </div>
      <form method="POST" enctype="multipart/form-data">
@@ -20,6 +20,12 @@
         <button class="btn btn-outline-info" type="Submit">
         	Update
 		</button>
+
+          {% if '/users/search/?q' in request.path %}
+          <button type="button" class="btn btn-primary">
+              Add Friend
+          </button>
+          {% endif %}
       </div>
     </form>
 	</div>

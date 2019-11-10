@@ -1,0 +1,29 @@
+{% extends "blog/base.html" %}
+{% load crispy_forms_tags %}
+{% load friendshiptags %}
+{% block content %}
+    <div class="content-section">
+      <div class="media">
+        <img class="rounded-circle account-img" src="{{ user.profile.image.url }}" alt="Profile Picture">
+        <div class="media-body">
+          <h2 class="account-heading">{{ result.username }}</h2>
+            <p class="text-secondary">{{ result.email }}</p>
+            <p class="text-seocndary">{{result.first_name }}{{result.last_name }}</p>
+            <p class="text-seocndary"></p>
+        </div>
+      </div>
+     <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <fieldset class="form-group">
+        {{ u_form|crispy }}
+        {{ p_form|crispy }}
+      </fieldset>
+      <div class="form-group">
+        <button class="btn btn-outline-info" type="Submit">
+        	Update
+		</button>
+          <a href="{% friend_requests request.user %}"><button type="button" class="btn btn-primary">Friend Request</button></a>
+      </div>
+    </form>
+	</div>
+{% endblock %}
