@@ -104,7 +104,13 @@ class UserPostListView(ListView):
 
 def like_post(request):
     post = get_object_or_404(Posts, id=request.Post.get('post_id'))
-    post.likes.add(request.user)
+    is_liked = False
+    if post.likes.filter(request.user.id).exists():
+        post.likes.remove(request.user)
+        is_liked =True
+    else:
+        post.likes.add(request.user)
+        is_liked = True
     return HttpResponseRedirect(post.get_absolute_url())
 
 
@@ -117,16 +123,6 @@ class PostDetailView(DetailView):
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
-    # parent_obj = None
-    # try:
-    #     parent_id = int(request.POST.get("parent_id"))
-    # except:
-    #     parent_id = None
-    #
-    # if parent_id:
-    #     parent_qs = Comment.objects.filter(id=parent_id)
-    #     if parent_qs.exists() and parent_qs.count() == 1:
-    #         parent_obj = parent_qs.first()
 
 
 def post_draft_list(request):
