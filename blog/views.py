@@ -18,7 +18,6 @@ from django_project.settings import MEDIA_URL
 
 user = get_user_model()
 
-
 def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
@@ -49,6 +48,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     """
     fields = ['title', 'content', 'image', 'video']
     model = Posts
+    success_url = '/blog'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -64,6 +64,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     model = Posts
     fields = ['title', 'content', 'image', 'video']
+    success_url = '/blog'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -112,17 +113,18 @@ def like_post(request):
 
 class PostDetailView(DetailView):
     model = Posts
+    context_object_name = 'post'
     template_name = 'blog/posts_detail.html'
     is_liked = False
 
-    def get_context_data(self, **kwargs):
-        content = super().get_context_data(**kwargs)
-        posts = content['posts']
-        if posts.likes.filter(id = request.user.id).exists():
-            content['is_liked'] = True
-        return content
+    # def get_context_data(self, request, **kwargs):
+    #     context = super(PostDetailView, self).get_context_data(request, **kwargs)
+    #     posts = context['posts']
+    #     if posts.likes.filter(id = request.user.id).exists():
+    #         context['is_liked'] = True
+    #     return context
 
 
 def post_draft_list(request):
-    posts = Posts.objects.filter(published_date__isnull=True).order_by('created_date')
+    posts = Posts.objects.all().order_by('created_date')
     return render(request, 'blog/post_draft_list.html', {'posts': posts})
