@@ -12,6 +12,7 @@
           <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.uuid %}">Update</a>
           <a class="btn btn-danger btn-sm mt-1 mb-1"  href="{% url 'post-delete' object.uuid  %}">Delete</a>
           <button type="submit" name="object.id" value="{{post_id}}" class="btn btn-primary btn-sm mt-1 mb-1">Like</button>
+            {{ total_likes }} Like {{ total_likes|pluralize }}
         </div>
         {% endif %}
         </div>

@@ -50,6 +50,10 @@ class Posts(models.Model):
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
 
+
+    def total_likes(self):
+        return self.likes.count
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
 

@@ -40,6 +40,7 @@ class PostDetailView(DetailView):
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
+
     """Post form has fields
         title
         content
@@ -103,26 +104,23 @@ class UserPostListView(ListView):
 
 
 def like_post(request):
-    post = get_object_or_404(Posts, id=request.Post.get('post_id'))
-    is_liked = False
-    if post.likes.filter(id = request.user.id).exists():
-        post.likes.remove(request.user)
-        is_liked = False
-    else:
-        post.likes.add(request.user)
-        is_liked = True
+    posts = get_object_or_404(Posts, id=request.Post.get('post_id'))
+    post.likes.add(request.user)
+    is_liked = True
     return HttpResponseRedirect(post.get_absolute_url())
 
 
 class PostDetailView(DetailView):
-    if user.is_authenticated:
-        model = Posts
-    else:
-        redirect('blog/')
+    model = Posts
+    template_name = 'blog/posts_detail.html'
+    is_liked = False
 
-    def get_queryset(self):
-        return Posts.objects.filter(author=self.request.user).order_by('date_posted')
-
+    def get_context_data(self, **kwargs):
+        content = super().get_context_data(**kwargs)
+        posts = content['posts']
+        if posts.likes.filter(id = request.user.id).exists():
+            content['is_liked'] = True
+        return content
 
 
 def post_draft_list(request):
