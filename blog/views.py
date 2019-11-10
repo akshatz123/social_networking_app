@@ -105,9 +105,9 @@ class UserPostListView(ListView):
 def like_post(request):
     post = get_object_or_404(Posts, id=request.Post.get('post_id'))
     is_liked = False
-    if post.likes.filter(request.user.id).exists():
+    if post.likes.filter(id = request.user.id).exists():
         post.likes.remove(request.user)
-        is_liked =True
+        is_liked = False
     else:
         post.likes.add(request.user)
         is_liked = True
