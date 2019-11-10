@@ -13,6 +13,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from users.models import Profile
 User = get_user_model()
+from friendship.models import Friend, Follow, Block
 
 
 def register(request):
@@ -87,7 +88,9 @@ def search(request):
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None:
-            results = User.objects.filter(Q(first_name=query))
+            results = User.objects.filter(Q(first_name=query)| Q(last_name=query)| Q(email=query))
+            # previous_url = request.META.get('HTTP_REFERER')
+            # print(previous_url)
             return render(request, 'users/search.html', { 'results': results } )
         else:
             context = {
@@ -102,12 +105,8 @@ def search_profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
-            p_form.save()
-            msg = 'Your account has been successfully updated!'
-            messages.success(request, msg)
-            return render(request,'users/profile.html', {'u_form':u_form, 'p_form':p_form})
+        msg = 'Your account has been successfully updated!'
+        messages.success(request, msg)
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user)
@@ -116,3 +115,8 @@ def search_profile(request):
             'p_form':p_form
         }
         return render(request, 'users/search_profile.html',context)
+
+
+def friend_request(request):
+    other_user = User.objects.get(pk=request.user.pk)
+    Friend.objects.add_friend(request.user,other_user,message='Hi! I would like to add you')
