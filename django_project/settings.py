@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'friendship',
-
 ]
 
 
@@ -96,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sample_blog',
         'USER': 'root',
-        'PASSWORD': 'password',
+        'PASSWORD': '1234root',
         'HOST': 'localhost',
         'PORT': '3306'
     }

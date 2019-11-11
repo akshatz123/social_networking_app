@@ -7,9 +7,12 @@
 <h1>Results for {{request.GET.q}} </h1>
 {% for result in results %}
 <br/>
-Name: {{ result.first_name }} {{result.last_name}}</a>
-<p>User Id: {{result.id}}</p>
-<p>Click on <u><a href="{% url 'profile' result.id %}">{{result.first_name}}'s  profile</a></u></p>
+Title: {{ result.title }}<br>
+Content: {{ result.content }}<br>
+Image:  <img src="{{result.image.url}}"><br>
+Video : <video controls autoplay >
+            <source src="{{media}}/{{result.video}}" type='video/mp4'/>
+        </video>
 {% endfor %}
 {% else %}
 No search results for this query

@@ -6,12 +6,15 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
+from blog.models import Posts
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, get_object_or_404
 from users.models import Profile
+
 User = get_user_model()
 from friendship.models import Friend, Follow, Block
 
@@ -45,7 +48,7 @@ def activate_account(request, uidb64, token):
     """Activate the account for the user using token and uid"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)        
+        user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
@@ -76,7 +79,7 @@ def profile(request):
             p_form.save()
             msg = 'Your account has been successfully updated!'
             messages.success(request, msg)
-            return redirect('profile')
+            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user)
@@ -88,14 +91,12 @@ def search(request):
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None:
-            results = User.objects.filter(Q(first_name=query)| Q(last_name=query)| Q(email=query))
-            # previous_url = request.META.get('HTTP_REFERER')
-            # print(previous_url)
-            return render(request, 'users/search.html', { 'results': results } )
+            results = Posts.objects.filter(Q(author__username__icontains=query))
+            return render(request, 'users/search.html', {'results': results})
         else:
             context = {
                 'results': "Not found",
-                      }
+            }
             return render(request, 'users/search.html', context)
     else:
         return render(request, 'base.html')
@@ -105,18 +106,18 @@ def search_profile(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        msg = 'Your account has been successfully updated!'
-        messages.success(request, msg)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            msg = 'Your account has been successfully updated!'
+            messages.success(request, msg)
+            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user)
-        context={
-            'u_form':u_form,
-            'p_form':p_form
-        }
-        return render(request, 'users/search_profile.html',context)
+        return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
 
 
 def friend_request(request):
     other_user = User.objects.get(pk=request.user.pk)
-    Friend.objects.add_friend(request.user,other_user,message='Hi! I would like to add you')
+    Friend.objects.add_friend(request.user, other_user, message='Hi! I would like to add you')
