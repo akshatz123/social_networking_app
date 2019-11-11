@@ -4,7 +4,7 @@ from .views import *
 
 urlpatterns = [
     path('friendship', include('friendship.urls')),
-    path('profile/', search_profile, name='profile_search'),
+    path('profile/', profile, name='profile'),
     path('search/', search, name='friends_search'),
     path('profile/<int:pk>', profileDetail, name='profile'),
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',

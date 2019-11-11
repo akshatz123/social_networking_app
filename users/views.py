@@ -90,7 +90,6 @@ def search(request):
         query = request.GET.get('q')
         if query is not None:
             results = User.objects.filter(username=query)
-            # print(results[0])
             return render(request, 'users/search.html', {'results': results})
         else:
             context = {
@@ -101,27 +100,25 @@ def search(request):
         return render(request, 'base.html')
 
 
-def search_profile(request):
+def search_profile(request, pk):
     """User search Profile"""
-    if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        msg = 'Your account has been successfully updated!'
-        messages.success(request, msg)
-        return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            u_form = UserUpdateForm(request.POST, instance=request.user)
+            p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+            msg = 'Your account has been successfully updated!'
+            messages.success(request, msg)
+            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
     else:
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user)
-        return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
+        return render(request, 'users/search_profile.html')
 
 
-def profileDetail(request,pk):
+def profileDetail(request, pk):
     user = get_object_or_404(User, pk=pk)
-    context = {
-        'first_name':user.first_name,
-        'last_name': user.last_name,
-        'dateofbirth': user.dateofbirth,
-        'email': user.email,
-        'username': user.username
-    }
-    return  render(request, 'users/search_profile.html', context)
+    context = dict(first_name=user.first_name,
+                   last_name=user.last_name,
+                   dateofbirth=user.dateofbirth,
+                   email=user.email,
+                   username=user.username
+                   )
+    return render(request, 'users/search_profile.html', context)

@@ -1,16 +1,25 @@
 {% extends "blog/base.html" %}
-{% load crispy_forms_tags %}
-{% load friendshiptags %}
+
 {% block content %}
     <div class="content-section">
       <div class="media">
-<!--        <img class="rounded-circle account-img" src="{{ image.url }}" alt="Profile Picture">-->
+        <img class="rounded-circle account-img" src="{{ user.profile.image.url }}" alt="Profile Picture">
         <div class="media-body">
-          Full name:<h2 class="account-heading">{{ first_name }} {{last_name }}</h2>
-          Email:<p class="text-secondary">{{ email }}</p>
-          Username: <p class="text-secondary">{{ username }}</p>
-          Date of birth: <p class="text-secondary">{{ dateofbirth }}</p>
+          Full name:<h2 class="account-heading">{{ user.first_name }} {{user.last_name }}</h2>
+          Email:<p class="text-secondary">{{ user.email }}</p>
+          Username: <p class="text-secondary">{{ user.username }}</p>
+          Date of birth: <p class="text-secondary">{{ user.dateofbirth }}</p>
         </div>
+        {% if user.is_authenticated %}
+        <div class="form-group">
+        <button class="btn btn-outline-info" type="Submit"><a href="{% url 'profile'%}">Edit</a>
+        </button>
+          {% else %}
+        <button type="button" class="btn btn-primary">
+              Add Friend
+        </button>
+      </div>
+        {% endif %}
       <div class="form-group">
       </div>
 	</div>
