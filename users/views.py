@@ -122,3 +122,7 @@ def profileDetail(request, pk):
                    username=user.username
                    )
     return render(request, 'users/search_profile.html', context)
+
+def addFriend(request):
+    email = EmailMessage()
+    email.send()
