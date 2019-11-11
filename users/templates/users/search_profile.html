@@ -4,18 +4,14 @@
 {% block content %}
     <div class="content-section">
       <div class="media">
-        <img class="rounded-circle account-img" src="{{ user.profile.image.url }}" alt="Profile Picture">
+        <img class="rounded-circle account-img" src="{{ user.image.url }}" alt="Profile Picture">
         <div class="media-body">
-          <h2 class="account-heading">{{ result.username }}</h2>
-            <p class="text-secondary">{{ result.email }}</p>
-            <p class="text-secondary">{{result.first_name }}{{result.last_name }}</p>
-            <p class="text-secondary"></p>
+          Full name:<h2 class="account-heading">{{ first_name }} {{last_name }}</h2>
+          Email:<p class="text-secondary">{{ email }}</p>
+          Username: <p class="text-secondary">{{ username }}</p>
+          Date of birth: <p class="text-secondary">{{ dateofbirth }}</p>
         </div>
-      </div>
       <div class="form-group">
-        <button class="btn btn-outline-info" type="Submit">
-        	Friend Request
-		</button>
       </div>
 	</div>
 {% endblock %}

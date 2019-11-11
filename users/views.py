@@ -92,7 +92,8 @@ def search(request):
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None:
-            results = Posts.objects.filter(Q(author__username__icontains=query))
+            results = User.objects.filter(username=query)
+            # print(results[0])
             return render(request, 'users/search.html', {'results': results})
         else:
             context = {
@@ -112,13 +113,20 @@ def search_profile(request):
             p_form.save()
             msg = 'Your account has been successfully updated!'
             messages.success(request, msg)
-            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form,  media= MEDIA_URL))
+            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user)
         return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
 
 
-def friend_request(request):
-    other_user = User.objects.get(pk=request.user.pk)
-    Friend.objects.add_friend(request.user, other_user, message='Hi! I would like to add you')
+def profileDetail(request,pk):
+    user = get_object_or_404(User, pk=request.user.pk)
+    context = {
+        'first_name':user.first_name,
+        'last_name': user.last_name,
+        'dateofbirth': user.dateofbirth,
+        'email': user.email,
+        'username': user.username
+    }
+    return  render(request, 'users/search_profile.html', context)

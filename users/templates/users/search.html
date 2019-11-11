@@ -5,17 +5,7 @@
 {% if results %}
 <h1>Results for {{request.GET.q}} </h1>
 {% for result in results %}
-<br/>
-Name :{{result.author}}<br>
-Title: {{ result.title }}<br>
-Content: {{ result.content }}<br>
-{%if result.image %}
-Image:  <img src="{{result.image.url}}"><br>
-<p></p>
-{% endif %}
-Video: <video width="400" controls autoplay >
-            <source src="{{media}}/{{result.video}}" type='video/mp4'/>
-        </video>
+Name : <a href="{% url 'profile' result.pk %}">{{result.username}}</a><br>
 
 {% endfor %}
 
