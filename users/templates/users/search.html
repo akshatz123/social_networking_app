@@ -9,8 +9,8 @@
 <br/>
 Title: {{ result.title }}<br>
 Content: {{ result.content }}<br>
-Image: {{result.image.url}}<br>
-video : <video controls autoplay >
+Image:  <img src="{{result.image.url}}"><br>
+Video : <video controls autoplay >
             <source src="{{media}}/{{result.video}}" type='video/mp4'/>
         </video>
 {% endfor %}

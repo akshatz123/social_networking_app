@@ -106,9 +106,8 @@ class UserPostListView(ListView):
 
 def like_post(request):
     posts = get_object_or_404(Posts, id=request.Post.get('post_id'))
-    post.likes.add(request.user)
-    is_liked = True
-    return HttpResponseRedirect(post.get_absolute_url())
+    posts.likes.add(request.user)
+    return HttpResponseRedirect(posts.get_absolute_url())
 
 
 class PostDetailView(DetailView):
