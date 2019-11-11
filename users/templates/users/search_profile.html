@@ -8,22 +8,14 @@
         <div class="media-body">
           <h2 class="account-heading">{{ result.username }}</h2>
             <p class="text-secondary">{{ result.email }}</p>
-            <p class="text-seocndary">{{result.first_name }}{{result.last_name }}</p>
-            <p class="text-seocndary"></p>
+            <p class="text-secondary">{{result.first_name }}{{result.last_name }}</p>
+            <p class="text-secondary"></p>
         </div>
       </div>
-     <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      <fieldset class="form-group">
-        {{ u_form|crispy }}
-        {{ p_form|crispy }}
-      </fieldset>
       <div class="form-group">
         <button class="btn btn-outline-info" type="Submit">
-        	Update
+        	Friend Request
 		</button>
-          <a href="{% friend_requests request.user %}"><button type="button" class="btn btn-primary">Friend Request</button></a>
       </div>
-    </form>
 	</div>
 {% endblock %}

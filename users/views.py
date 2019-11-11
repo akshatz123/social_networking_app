@@ -8,6 +8,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from blog.models import Posts
+from django_project.settings import MEDIA_URL
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
@@ -111,7 +112,7 @@ def search_profile(request):
             p_form.save()
             msg = 'Your account has been successfully updated!'
             messages.success(request, msg)
-            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
+            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form,  media= MEDIA_URL))
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user)

@@ -42,7 +42,7 @@ class Posts(models.Model):
     video = models.FileField(upload_to='videos/',blank=True, null=True, verbose_name="video limited to mp4:")
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    # draft = models.BooleanField(default=False)
+    draft = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title

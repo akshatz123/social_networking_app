@@ -21,7 +21,7 @@
               {% elif post.image %}
                   <img src="{{post.image.url}}">
               {% elif post.video %}
-                  <video controls autoplay >
+                  <video width="400px" controls autoplay >
                       <source src="{{media}}/{{post.video}}" type='video/mp4'/>
                   </video>
               <p></p>
