@@ -7,8 +7,6 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
-from blog.models import Posts
-from django_project.settings import MEDIA_URL
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
@@ -17,7 +15,6 @@ from django.shortcuts import render, get_object_or_404
 from users.models import Profile
 
 User = get_user_model()
-from friendship.models import Friend, Follow, Block
 
 
 def register(request):
@@ -105,15 +102,13 @@ def search(request):
 
 
 def search_profile(request):
+    """User search Profile"""
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
-            p_form.save()
-            msg = 'Your account has been successfully updated!'
-            messages.success(request, msg)
-            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
+        msg = 'Your account has been successfully updated!'
+        messages.success(request, msg)
+        return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user)
@@ -121,7 +116,7 @@ def search_profile(request):
 
 
 def profileDetail(request,pk):
-    user = get_object_or_404(User, pk=request.user.pk)
+    user = get_object_or_404(User, pk=pk)
     context = {
         'first_name':user.first_name,
         'last_name': user.last_name,
