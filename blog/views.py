@@ -18,7 +18,6 @@ from django_project.settings import MEDIA_URL
 
 user = get_user_model()
 
-
 def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
@@ -40,6 +39,7 @@ class PostDetailView(DetailView):
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
+
     """Post form has fields
         title
         content
@@ -48,6 +48,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     """
     fields = ['title', 'content', 'image', 'video']
     model = Posts
+    success_url = '/blog'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -63,6 +64,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     model = Posts
     fields = ['title', 'content', 'image', 'video']
+    success_url = '/blog'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -103,6 +105,7 @@ class UserPostListView(ListView):
 
 
 def like_post(request):
+<<<<<<< HEAD
     post = get_object_or_404(Posts, id=request.Post.get('post_id'))
     is_liked = False
     if post.likes.filter(id=request.user.id).exists():
@@ -113,28 +116,26 @@ def like_post(request):
         is_liked = True
     return HttpResponseRedirect(post.get_absolute_url())
 
-
 class PostDetailView(DetailView):
-    if user.is_authenticated:
-        model = Posts
-    else:
-        redirect('blog/')
-
-    def get_queryset(self):
-        return Posts.objects.filter(author=self.request.user).order_by('date_posted')
-
-    # parent_obj = None
-    # try:
-    #     parent_id = int(request.POST.get("parent_id"))
-    # except:
-    #     parent_id = None
-    #
-    # if parent_id:
-    #     parent_qs = Comment.objects.filter(id=parent_id)
-    #     if parent_qs.exists() and parent_qs.count() == 1:
-    #         parent_obj = parent_qs.first()
+    model = Posts
+    context_object_name = 'post'
+    template_name = 'blog/posts_detail.html'
+    is_liked = False
 
 
 def post_draft_list(request):
-    posts = Posts.objects.filter(published_date__isnull=True).order_by('created_date')
+    posts = Posts.objects.all().order_by('created_date')
     return render(request, 'blog/post_draft_list.html', {'posts': posts})
+
+
+def profileDetail(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    profile = get_object_or_404 (Profile, pk=pk)
+    context = dict(first_name=user.first_name,
+                   last_name=user.last_name,
+                   dateofbirth=user.dateofbirth,
+                   email=user.email,
+                   username=user.username,
+                   image = profile.image.url
+                   )
+    return render(request, 'users/search_profile.html', context)

@@ -49,8 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'friendship',
-    # 'secretballot',
-    # 'likes'
+    'likes'
 ]
 
 
@@ -97,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sample_blog',
         'USER': 'root',
-        'PASSWORD': 'password',
+        'PASSWORD': '1234root',
         'HOST': 'localhost',
         'PORT': '3306'
     }

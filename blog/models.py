@@ -33,13 +33,13 @@ class Posts(models.Model):
     Post has title, content, image, video and author fields which are visible to user.
     """
 
-    title = models.CharField(max_length=100)
-    content = models.TextField()
+    title = models.CharField(max_length=100, verbose_name="Title:")
+    content = models.TextField(verbose_name="Content:")
     date_posted = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to="profile_pics", null=True, blank=True)
+    image = models.ImageField(upload_to="profile_pics", null=True, blank=True, verbose_name="Image:")
     date_modified = models.DateTimeField(auto_now=True, blank=True)
-    video = models.FileField(upload_to='videos/',blank=True, null=True, verbose_name="video")
+    video = models.FileField(upload_to='videos/',blank=True, null=True, verbose_name="video limited to mp4:")
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     draft = models.BooleanField(default=False)
@@ -49,6 +49,10 @@ class Posts(models.Model):
 
     def get_absolute_url(self):
         return reverse('post-detail', kwargs={'pk': self.pk})
+
+
+    def total_likes(self):
+        return self.likes.count
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

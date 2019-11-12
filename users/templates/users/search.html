@@ -1,16 +1,14 @@
 {% extends 'blog/base.html' %}
 {% load static %}
-
 {% block content %}
 {% if request.GET.q != '' %}
 {% if results %}
 <h1>Results for {{request.GET.q}} </h1>
 {% for result in results %}
-<br/>
-Name: {{ result.first_name }} {{result.last_name}}</a>
-<p>User Id: {{result.id}}</p>
-<p>Click on <u><a href="{% url 'profile' result.id %}">{{result.first_name}}'s  profile</a></u></p>
+Name : <a href="{% url 'profile' result.pk %}">{{result.username}}</a><br>
+
 {% endfor %}
+
 {% else %}
 No search results for this query
 {% endif %}
