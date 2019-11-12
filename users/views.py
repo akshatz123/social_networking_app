@@ -122,24 +122,26 @@ def profileDetail(request, pk):
                    username=user.username,
                    image = profile.image.url
                    )
+    # print("IN Profile Detail")
     return render(request, 'users/search_profile.html', context)
 
 def addfriend(request, pk):
     """Sending friend request to email"""
     user= get_object_or_404(User, pk=pk)
-    print(user.first_name)
     current_site = get_current_site(request)
     email_subject = 'Friend Request from ``'
     message = render_to_string('users/addfriend.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(),
+                'token': account_activation_token.make_token(user),
             })
-    to_email = user.email
+    to_email = user
+    print(to_email)
+    # print(user)
     email = EmailMessage(email_subject, message, to=[to_email])
     email.send()
-    return render(request, 'users/addfriend.html')
+    return render(request, 'users/addfriend.html', {})
 
 def addfriend_link(request, uidb64, token):
     """Activate the account for the user using token and uid"""

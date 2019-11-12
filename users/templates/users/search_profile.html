@@ -5,7 +5,7 @@
       <div class="media">
         <img class="rounded-circle account-img" src="{{ image }}" alt="Profile Picture">
         <div class="media-body">
-          Full name:<h2 class="account-heading">{{ first_name }} {{last_name }}</h2>
+         Full name:<h2 class="account-heading">{{ first_name }} {{last_name }}</h2>
           Email:<p class="text-secondary">{{ email }}</p>
           Username: <p class="text-secondary">{{ username }}</p>
           Date of birth: <p class="text-secondary">{{ dateofbirth }}</p>
@@ -13,7 +13,7 @@
         {% if request.profile %}
         <button class="btn btn-outline-info" type="Submit"><a href="{% url 'profile' user.pk %}">Edit</a></button>
         {% else %}
-        <button class="btn btn outline-info" type="submit"><a href="{% url 'addFriend' user.pk %}">Add Friend</a></button>
+        <button class="btn btn outline-info" type="submit"><a href="{% url 'addfriend' user.pk  %}">Add Friend</a></button>
         {% endif %}
 	</div>
 {% endblock %}
