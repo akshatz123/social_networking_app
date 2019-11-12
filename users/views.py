@@ -115,14 +115,12 @@ def search_profile(request, pk):
 
 def profileDetail(request, pk):
     user = get_object_or_404(User, pk=pk)
+    profile = get_object_or_404 (Profile, pk=pk)
     context = dict(first_name=user.first_name,
                    last_name=user.last_name,
                    dateofbirth=user.dateofbirth,
                    email=user.email,
-                   username=user.username
+                   username=user.username,
+                   image = profile.image.url
                    )
     return render(request, 'users/search_profile.html', context)
-
-def addFriend(request):
-    email = EmailMessage()
-    email.send()

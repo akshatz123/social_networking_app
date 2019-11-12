@@ -17,12 +17,15 @@
         {{ p_form|crispy }}
       </fieldset>
       <div class="form-group">
-        <button class="btn btn-outline-info" type="Submit">
+        {% if request.user %}
+          <button class="btn btn-outline-info" type="Submit">
         	Update
-		</button>
-<!--        <button type="button" class="btn btn-primary">-->
-<!--              Add Friend-->
-<!--        </button>-->
+		    </button>
+        {% else %}
+            <button type="button" class="btn btn-primary">
+              Add Friend
+            </button>
+        {% endif %}
       </div>
     </form>
 	</div>

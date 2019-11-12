@@ -13,7 +13,6 @@
             <h2><a class="article-title" href="{% url 'post-detail' post.uuid %}">{{ post.title }} </a></h2>
             <p class="article-content">{{ post.content }}</p>
               <img src="{{ post.image.url }}" alt="">
-
           </div>
         </article>
     {% endfor %}
@@ -29,7 +28,7 @@
       	{% endif %}
       {% endfor %}
   		{% if page_obj.has_next %}
-      		<a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+      		<a class="btn btn-outline-info mb-4" href="?pag e={{ page_obj.next_page_number }}">Next</a>
       		<a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
       	{% endif %}
     {% endif %}
