@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'friendship',
+    'likes',
+    'secretballot',
 ]
 
 

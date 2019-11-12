@@ -6,8 +6,6 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-
-from blog.models import Posts
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
@@ -16,7 +14,6 @@ from django.shortcuts import render, get_object_or_404
 from users.models import Profile
 
 User = get_user_model()
-from friendship.models import Friend, Follow, Block
 
 
 def register(request):
@@ -91,7 +88,7 @@ def search(request):
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None:
-            results = Posts.objects.filter(Q(author__username__icontains=query))
+            results = User.objects.filter(username=query)
             return render(request, 'users/search.html', {'results': results})
         else:
             context = {
@@ -102,22 +99,37 @@ def search(request):
         return render(request, 'base.html')
 
 
-def search_profile(request):
-    if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
-            p_form.save()
+def search_profile(request, pk):
+    """User search Profile"""
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            u_form = UserUpdateForm(request.POST, instance=request.user)
+            p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
             msg = 'Your account has been successfully updated!'
             messages.success(request, msg)
             return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
     else:
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user)
-        return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
+        return render(request, 'users/search_profile.html')
 
 
-def friend_request(request):
-    other_user = User.objects.get(pk=request.user.pk)
-    Friend.objects.add_friend(request.user, other_user, message='Hi! I would like to add you')
+def profileDetail(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    profile = get_object_or_404 (Profile, pk=pk)
+    context = dict(first_name=user.first_name,
+                   last_name=user.last_name,
+                   dateofbirth=user.dateofbirth,
+                   email=user.email,
+                   username=user.username,
+                   image = profile.image.url
+                   )
+    return render(request, 'users/search_profile.html', context)
+
+def addFriend(request,pk):
+    """Sending friend request to email"""
+    user= get_object_or_404(User, pk=pk)
+    email_subject = 'Friend Request from {{user}}'
+    message = 'You have a friend request from {{user}}'
+    to_email = user.email
+    email = EmailMessage(email_subject, message, to=[to_email])
+    email.send()
+    return render(request,'users/addFriend.html', {})

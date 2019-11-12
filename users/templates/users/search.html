@@ -1,19 +1,14 @@
 {% extends 'blog/base.html' %}
 {% load static %}
-
 {% block content %}
 {% if request.GET.q != '' %}
 {% if results %}
 <h1>Results for {{request.GET.q}} </h1>
 {% for result in results %}
-<br/>
-Title: {{ result.title }}<br>
-Content: {{ result.content }}<br>
-Image:  <img src="{{result.image.url}}"><br>
-Video : <video controls autoplay >
-            <source src="{{media}}/{{result.video}}" type='video/mp4'/>
-        </video>
+Name : <a href="{% url 'profile' result.pk %}">{{result.username}}</a><br>
+
 {% endfor %}
+
 {% else %}
 No search results for this query
 {% endif %}
