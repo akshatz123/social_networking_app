@@ -32,7 +32,7 @@ class PostDetailView(DetailView):
     if user.is_authenticated:
         model = Posts
     else:
-        redirect('blog/')
+        redirect('/')
 
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
@@ -105,7 +105,6 @@ class UserPostListView(ListView):
 
 
 def like_post(request):
-<<<<<<< HEAD
     post = get_object_or_404(Posts, id=request.Post.get('post_id'))
     is_liked = False
     if post.likes.filter(id=request.user.id).exists():
@@ -128,14 +127,3 @@ def post_draft_list(request):
     return render(request, 'blog/post_draft_list.html', {'posts': posts})
 
 
-def profileDetail(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    profile = get_object_or_404 (Profile, pk=pk)
-    context = dict(first_name=user.first_name,
-                   last_name=user.last_name,
-                   dateofbirth=user.dateofbirth,
-                   email=user.email,
-                   username=user.username,
-                   image = profile.image.url
-                   )
-    return render(request, 'users/search_profile.html', context)
