@@ -1,27 +1,20 @@
 {% extends "blog/base.html" %}
-{% load crispy_forms_tags %}
+
 {% block content %}
     <div class="content-section">
       <div class="media">
-        <img class="rounded-circle account-img" src="{{ results.profile.image.url }}" alt="Profile Picture">
+        <img class="rounded-circle account-img" src="{{ profile.image.url }}" alt="Profile Picture">
         <div class="media-body">
-          <h2 class="account-heading">{{ result.username }}</h2>
-            <p class="text-secondary">{{ result.email }}</p>
+          Full name:<h2 class="account-heading">{{ first_name }} {{last_name }}</h2>
+          Email:<p class="text-secondary">{{ email }}</p>
+          Username: <p class="text-secondary">{{ username }}</p>
+          Date of birth: <p class="text-secondary">{{ dateofbirth }}</p>
         </div>
-      </div>
-     <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      <fieldset class="form-group">
-        <legend class="border-bottom mb-4">Join Today</legend>
-        {{ u_form|crispy }}
-        {{ p_form|crispy }}
-      </fieldset>
-      <div class="form-group">
-        <button class="btn btn-outline-info" type="Submit">
-        	Update
-		</button>
-        <button type="button" class="btn btn-primary">Add Friend</button>
-      </div>
-    </form>
+        <button type="submit" class="btn btn-outline-info">
+              Add Friend
+        </button>
+        {% if user.is_authenticated %}
+          <button class="btn btn-outline-info" type="Submit"><a href="{% url 'profile' %}">Edit</a></button>
+        {% endif %}
 	</div>
 {% endblock %}
