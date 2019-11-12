@@ -32,7 +32,7 @@ class PostDetailView(DetailView):
     if user.is_authenticated:
         model = Posts
     else:
-        redirect('blog/')
+        redirect('/')
 
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
@@ -105,10 +105,15 @@ class UserPostListView(ListView):
 
 
 def like_post(request):
-    posts = get_object_or_404(Posts, id=request.Post.get('post_id'))
-    posts.likes.add(request.user)
-    return HttpResponseRedirect(posts.get_absolute_url())
-
+    post = get_object_or_404(Posts, id=request.Post.get('post_id'))
+    is_liked = False
+    if post.likes.filter(id=request.user.id).exists():
+        post.likes.remove(request.user)
+        is_liked = False
+    else:
+        post.likes.add(request.user)
+        is_liked = True
+    return HttpResponseRedirect(post.get_absolute_url())
 
 class PostDetailView(DetailView):
     model = Posts
@@ -116,14 +121,9 @@ class PostDetailView(DetailView):
     template_name = 'blog/posts_detail.html'
     is_liked = False
 
-    # def get_context_data(self, request, **kwargs):
-    #     context = super(PostDetailView, self).get_context_data(request, **kwargs)
-    #     posts = context['posts']
-    #     if posts.likes.filter(id = request.user.id).exists():
-    #         context['is_liked'] = True
-    #     return context
-
 
 def post_draft_list(request):
     posts = Posts.objects.all().order_by('created_date')
     return render(request, 'blog/post_draft_list.html', {'posts': posts})
+
+

@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
@@ -115,14 +114,22 @@ def search_profile(request, pk):
 
 def profileDetail(request, pk):
     user = get_object_or_404(User, pk=pk)
+    profile = get_object_or_404 (Profile, pk=pk)
     context = dict(first_name=user.first_name,
                    last_name=user.last_name,
                    dateofbirth=user.dateofbirth,
                    email=user.email,
-                   username=user.username
+                   username=user.username,
+                   image = profile.image.url
                    )
     return render(request, 'users/search_profile.html', context)
 
-def addFriend(request):
-    email = EmailMessage()
+def addFriend(request,pk):
+    """Sending friend request to email"""
+    user= get_object_or_404(User, pk=pk)
+    email_subject = 'Friend Request from {{user}}'
+    message = 'You have a friend request from {{user}}'
+    to_email = user.email
+    email = EmailMessage(email_subject, message, to=[to_email])
     email.send()
+    return render(request,'users/addFriend.html', {})
