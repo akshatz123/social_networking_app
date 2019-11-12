@@ -1,0 +1,6 @@
+{% autoescape off %}
+Hi {{ user.username }},
+You have sent a friend request from {{user.first_name }}{{user.last_name}}
+Please click on link to accept
+http://{{ domain }}{% url 'addfriend_link' uidb64=uid token=token %}
+{% endautoescape %}
