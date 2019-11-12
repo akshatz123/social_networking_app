@@ -123,11 +123,17 @@ def profileDetail(request, pk):
                    image = profile.image.url
                    )
     # print("IN Profile Detail")
-    return render(request, 'users/search_profile.html', context)
+    # print(user)
+    if request.user.id == user.pk:
+        return render(request, 'users/view_profile.html', context)
+    else:
+        return render(request, 'users/search_profile.html',context)
+
 
 def addfriend(request, pk):
     """Sending friend request to email"""
     user= get_object_or_404(User, pk=pk)
+    # print(user)
     current_site = get_current_site(request)
     email_subject = 'Friend Request from ``'
     message = render_to_string('users/addfriend.html', {
@@ -137,7 +143,7 @@ def addfriend(request, pk):
                 'token': account_activation_token.make_token(user),
             })
     to_email = user
-    print(to_email)
+    # print(to_email)
     # print(user)
     email = EmailMessage(email_subject, message, to=[to_email])
     email.send()
