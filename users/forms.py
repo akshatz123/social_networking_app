@@ -14,8 +14,6 @@ class DateInput(forms.DateInput):
     input_type = 'date'
 
 
-
-
 class UserRegisterForm(UserCreationForm):
     dateofbirth = forms.DateField(label='Date of birth', widget=DateInput, validators=[past])
 
@@ -42,6 +40,8 @@ class UserUpdateForm(forms.ModelForm):
             'first_name',
             'last_name'
         ]
+
+
 def past(value):
     if value > date.today():
         raise forms.ValidationError("Date cannot be of the future")
@@ -53,6 +53,8 @@ class ProfileUpdateForm(forms.ModelForm):
         fields = [
             'image'
         ]
+
+
 def past(value):
     if value > date.today():
         raise forms.ValidationError("Date cannot be of the future")
