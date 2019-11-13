@@ -19,17 +19,16 @@
                   <source src="{{media}}/{{post.video}}" type='video/mp4'/>
               </video>
               {% elif post.image %}
-                  <img src="{{post.image.url}}">
+                  <img src="{{post.image.url}}" />
               {% elif post.video %}
                   <video width="400px" controls autoplay >
                       <source src="{{media}}/{{post.video}}" type='video/mp4'/>
                   </video>
               <p></p>
               {% endif%}
-
           </div>
-             <button type="submit" name="object.id" value="{{post_id}}" class="btn btn-primary btn-sm mt-1 mb-1">Like</button>
-  {{ total_likes }} Like {{ total_likes|pluralize }}
+<!--             <button type="submit" name="object.id" value="{{post_id}}" class="btn btn-primary btn-sm mt-1 mb-1">Like</button>-->
+<!--  {{ total_likes }} Like {{ total_likes|pluralize }}-->
           <ul>
               {% for user_p in users %}
 		        <li>

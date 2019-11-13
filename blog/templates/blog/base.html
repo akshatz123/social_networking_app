@@ -37,7 +37,14 @@
             {% endif %}
              <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
             </div>
-            <!-- Navbar Right Side -->
+            {% if messages %}
+        <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+              <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
                 <div class="form-group">
@@ -45,12 +52,12 @@
                         <input class="form-control" name="q" value="{{request.GET.q}}" type="text" placeholder="Search" aria-label="Search" />
                     </form>
                  </div>
-                <a class= "nav-item nav-link" href="#">
-                    <button type="button" class="btn btn-primary">
-                    <img src="https://img.icons8.com/carbon-copy/100/000000/appointment-reminders--v1.png" width="15" height="15px">
-                        <span class="badge badge-light"></span>
-                        </button>
-                </a>
+<!--                <a class= "nav-item nav-link" href="#">-->
+<!--                    <button type="button" class="btn btn-primary">-->
+<!--                    <img src="https://img.icons8.com/carbon-copy/100/000000/appointment-reminders&#45;&#45;v1.png" width="15" height="15px">-->
+<!--                        <span class="badge badge-light"></span>-->
+<!--                        </button>-->
+<!--                </a>-->
                 <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
                 <a class="nav-item nav-link" href="{% url 'profile' user.id %}">Profile</a>
                 <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
