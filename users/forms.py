@@ -41,7 +41,8 @@ class UserUpdateForm(forms.ModelForm):
         fields = [
             'email',
             'dateofbirth',
-            # 'first_name',
+            'first_name',
+            'last_name'
         ]
 
 

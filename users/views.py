@@ -9,7 +9,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from users.models import Profile
 
@@ -54,7 +54,7 @@ def activate_account(request, uidb64, token):
         login(request, user)
         return HttpResponse('Your account has been activate successfully')
     else:
-        return HttpResponse('Activation link is invalid!')
+        return render(request,'Activation link is invalid!')
 
 
 def users_list(request):
@@ -146,7 +146,7 @@ def addfriend(request, pk):
     return render(request, 'users/addfriend.html', {})
 
 def addfriend_link(request, uidb64, token, pk):
-    """Activate the account for the user using token and uid"""
+    """Adding a link  in email which is sent to friend through which one can accept or reject friend request"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
