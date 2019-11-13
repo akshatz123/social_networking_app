@@ -35,7 +35,7 @@ def register(request):
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(email_subject, message, to=[to_email])
             email.send()
-            redirect (request, 'users/email_sent.html', {'form': form})
+            return (request, 'users/email_sent.html', {'form': form})
     else:
         form = UserRegisterForm()
     return render(request, 'users/login.html', {'form': form})
