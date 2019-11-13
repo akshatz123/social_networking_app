@@ -33,8 +33,9 @@ class PostDetailView(DetailView):
     """Options to Update, delete the post"""
     if user.is_authenticated:
         model = Posts
+        success_url = 'blog/home.html'
     else:
-        redirect('')
+        redirect('/blog')
 
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
@@ -120,6 +121,8 @@ class UserPostListView(ListView):
 #     return HttpResponseRedirect(post.get_absolute_url())
 #
 #
+
+
 class PostDetailView(DetailView):
     """Only self post visible right now"""
     model = Posts
