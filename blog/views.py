@@ -18,6 +18,7 @@ from django_project.settings import MEDIA_URL
 
 user = get_user_model()
 
+
 def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
@@ -29,6 +30,7 @@ def home_view(request):
 
 
 class PostDetailView(DetailView):
+    """Options to Update delete"""
     if user.is_authenticated:
         model = Posts
     else:
@@ -39,7 +41,6 @@ class PostDetailView(DetailView):
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-
     """Post form has fields
         title
         content
@@ -78,6 +79,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Deletion of the post"""
     model = Posts
     success_url = '/blog'
 
@@ -89,10 +91,12 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def about(request):
+    """About page forthe company"""
     return render(request, 'blog/about.html', {'title': 'About'})
 
 
 class UserPostListView(ListView):
+    """Own post and friend blog are visible"""
     model = Posts
     template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
@@ -115,11 +119,13 @@ def like_post(request):
         is_liked = True
     return HttpResponseRedirect(post.get_absolute_url())
 
+
 class PostDetailView(DetailView):
+    """Only self post visible right now"""
     model = Posts
     context_object_name = 'post'
     template_name = 'blog/posts_detail.html'
-    is_liked = False
+    # is_liked = False
 
 
 def post_draft_list(request):
