@@ -18,6 +18,7 @@ from django_project.settings import MEDIA_URL
 
 user = get_user_model()
 
+
 def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
@@ -29,17 +30,17 @@ def home_view(request):
 
 
 class PostDetailView(DetailView):
+    """Options to Update, delete the post"""
     if user.is_authenticated:
         model = Posts
     else:
-        redirect('/')
+        redirect('')
 
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-
     """Post form has fields
         title
         content
@@ -78,6 +79,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Deletion of the post"""
     model = Posts
     success_url = '/blog'
 
@@ -89,10 +91,12 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def about(request):
+    """About page forthe company"""
     return render(request, 'blog/about.html', {'title': 'About'})
 
 
 class UserPostListView(ListView):
+    """Own post and friend blog are visible"""
     model = Posts
     template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
@@ -103,23 +107,25 @@ class UserPostListView(ListView):
         user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
 
-
-def like_post(request):
-    post = get_object_or_404(Posts, id=request.Post.get('post_id'))
-    is_liked = False
-    if post.likes.filter(id=request.user.id).exists():
-        post.likes.remove(request.user)
-        is_liked = False
-    else:
-        post.likes.add(request.user)
-        is_liked = True
-    return HttpResponseRedirect(post.get_absolute_url())
-
+#
+# def like_post(request):
+#     post = get_object_or_404(Posts, id=request.Post.get('post_id'))
+#     is_liked = False
+#     if post.likes.filter(id=request.user.id).exists():
+#         post.likes.remove(request.user)
+#         is_liked = False
+#     else:
+#         post.likes.add(request.user)
+#         is_liked = True
+#     return HttpResponseRedirect(post.get_absolute_url())
+#
+#
 class PostDetailView(DetailView):
+    """Only self post visible right now"""
     model = Posts
     context_object_name = 'post'
     template_name = 'blog/posts_detail.html'
-    is_liked = False
+    # is_liked = False
 
 
 def post_draft_list(request):

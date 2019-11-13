@@ -35,10 +35,10 @@ def register(request):
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(email_subject, message, to=[to_email])
             email.send()
-            return HttpResponse('We have sent you an email, please confirm your email address to complete registration')
+            return render (request, 'users/email_sent.html')
     else:
         form = UserRegisterForm()
-    return render(request, 'users/login.html', {'form': form})
+    return render(request, 'users/register.html', {'form': form})
 
 
 def activate_account(request, uidb64, token):
@@ -131,7 +131,6 @@ def profileDetail(request, pk):
 def addfriend(request, pk):
     """Sending friend request to email"""
     user= get_object_or_404(User, pk=pk)
-    print(user)
     # current_site = get_current_site(request)
     email_subject = 'Friend Request from '+ user.username
     # message = render_to_string('users/addfriend.html', {
@@ -142,19 +141,18 @@ def addfriend(request, pk):
     #         })
     message = 'You have a friend request from ' + user.username
     to_email = user.email
-    print(user)
     email = EmailMessage(email_subject, message, to=[to_email])
     email.send()
     return render(request, 'users/addfriend.html', {})
 
-# def addfriend_link(request, uidb64, token):
-#     """Activate the account for the user using token and uid"""
-#     try:
-#         uid = force_bytes(urlsafe_base64_decode(uidb64))
-#         user = User.objects.get(pk=uid)
-#     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
-#         user = None
-#     if user is not None and account_activation_token.check_token(user, token):
-#         user.is_active = True
-#         user.save()
-#         return render(request, 'users/addfriend.html')
+def addfriend_link(request, uidb64, token, pk):
+    """Activate the account for the user using token and uid"""
+    try:
+        uid = force_bytes(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return render(request, 'users/addfriend.html')

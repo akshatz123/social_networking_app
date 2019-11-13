@@ -19,5 +19,5 @@ urlpatterns = [
     url('post/(?P<pk>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/update', PostUpdateView.as_view(), name='post-update'),
     url('post/(?P<pk>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/delete', PostDeleteView.as_view(), name='post-delete'),
     path('about/', about, name='blog-about'),
-    url('likes/', like_post, name='likes_post'),
+    # url('likes/', like_post, name='likes_post'),
 ]
