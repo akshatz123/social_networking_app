@@ -34,7 +34,7 @@ class PostDetailView(DetailView):
     if user.is_authenticated:
         model = Posts
     else:
-        redirect('/')
+        redirect('')
 
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
