@@ -29,7 +29,7 @@ class UserRegisterForm(UserCreationForm):
 
 
 class UserUpdateForm(forms.ModelForm):
-    email = forms.EmailField()
+    email = forms.EmailField(disabled=True)
     dateofbirth = forms.DateField(widget=DateInput,  validators=[past])
 
     class Meta:
