@@ -30,7 +30,7 @@ def home_view(request):
 
 
 class PostDetailView(DetailView):
-    """Options to Update delete"""
+    """Options to Update, delete the post"""
     if user.is_authenticated:
         model = Posts
     else:
