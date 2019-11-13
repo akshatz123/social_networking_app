@@ -16,9 +16,19 @@
         </div>
         <h2 class="article-title">{{ object.title }}</h2>
         <p class="article-content">{{ object.content }}</p>
-      {% if object.image.url  %}
-        <img src = "{{object.image.url}}" alt="No image found"/>
-      {% endif %}
+     {% if object.image and object.video %}
+                <img src = "{{object.image.url}}"/>
+              <p></p>
+              <video width='400' controls>
+                  <source src="{{media}}/{{object.video}}" type='video/mp4'/>
+              </video>
+              {% elif post.image %}
+                  <img src="{{object.image.url}}">
+              {% elif post.video %}
+                  <video width="400px" controls type="mp4">
+                      <source src="{{media}}/{{object.video}}" type='video/mp4'/>
+                  </video>
+              {% endif%}
       </div>
   </article>
 {% endblock %}

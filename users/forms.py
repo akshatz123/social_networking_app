@@ -16,7 +16,10 @@ class DateInput(forms.DateInput):
 
 class UserRegisterForm(UserCreationForm):
     dateofbirth = forms.DateField(label='Date of birth', widget=DateInput, validators=[past])
-
+    email = forms.EmailField()
+    # dateofbirth = forms.DateField(widget=DateInput, validators=[past])
+    first_name = forms.CharField(required=True, max_length=50)
+    last_name = forms.CharField(required=True, max_length=50)
     class Meta:
         model = User
         fields = [
@@ -31,14 +34,14 @@ class UserRegisterForm(UserCreationForm):
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField(disabled=True)
     dateofbirth = forms.DateField(widget=DateInput,  validators=[past])
-
+    first_name= forms.CharField(required=True, max_length=50)
+    last_name = forms.CharField(required=True, max_length=50)
     class Meta:
         model = User
         fields = [
             'email',
             'dateofbirth',
-            'first_name',
-            'last_name'
+            # 'first_name',
         ]
 
 
