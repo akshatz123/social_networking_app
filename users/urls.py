@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         activate_account, name='activate'),
     # url(r'^friendship/', include('friendship.urls')),
-path('<int:pk>/', addfriend, name='addfriend'),
-    url(r'^addfriend/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        addfriend_link, name='addfriend_link'),
+path('<int:pk>', addfriend, name='addfriend')
+    # url(r'^addfriend/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+    #     addfriend_link, name='addfriend_link'),
 ]
