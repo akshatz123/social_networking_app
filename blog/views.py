@@ -40,6 +40,11 @@ class PostDetailView(DetailView):
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
+    def get_context_data(self, **kwargs):
+        context = super(PostDetailView, self)\
+            .get_context_data(**kwargs)
+        context['media'] = MEDIA_URL
+        return context
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     """Post form has fields
@@ -122,13 +127,13 @@ class UserPostListView(ListView):
 #
 #
 
-
-class PostDetailView(DetailView):
-    """Only self post visible right now"""
-    model = Posts
-    context_object_name = 'post'
-    template_name = 'blog/posts_detail.html'
-    # is_liked = False
+#
+# class PostDetailView(DetailView):
+#     """Only self post visible right now"""
+#     model = Posts
+#     context_object_name = 'post'
+#     template_name = 'blog/posts_detail.html'
+#     # is_liked = False
 
 
 def post_draft_list(request):
