@@ -4,10 +4,16 @@
 {% if request.GET.q != '' %}
 {% if results %}
 <h1>Results for {{request.GET.q}} </h1>
+<table id="friends">
 {% for result in results %}
-Name : <a href="{% url 'profile' result.pk %}">{{result.username}}</a><br>
-
+    <th>Profile Pictures</th>
+    <th>Details</th>
+    <th>Email ID</th>
 {% endfor %}
+
+</table>
+
+
 
 {% else %}
 No search results for this query

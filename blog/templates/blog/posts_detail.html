@@ -1,6 +1,6 @@
 {% extends "blog/base.html" %}
 {% block content %}
-  <article class="media content-section">
+HIII  <article class="media content-section">
     <img class="rounded-circle article-img" 
     src="{{ object.author.profile.image.url }}">
     <div class="media-body">
@@ -16,19 +16,19 @@
         </div>
         <h2 class="article-title">{{ object.title }}</h2>
         <p class="article-content">{{ object.content }}</p>
-     {% if object.image and object.video %}
+        {% if object.image and object.video %}
                 <img src = "{{object.image.url}}"/>
               <p></p>
-              <video width='400' controls>
-                  <source src="{{media}}/{{object.video}}" type='video/mp4'/>
+              <video width='400' controls autoplay type="mp4">
+                  <source src="{{media}}/{{post.video}}" type='video/mp4'/>
               </video>
               {% elif post.image %}
                   <img src="{{object.image.url}}">
               {% elif post.video %}
                   <video width="400px" controls type="mp4">
-                      <source src="{{media}}/{{object.video}}" type='video/mp4'/>
+                      <source src="{{media}}/{{post.video}}" type='video/mp4'/>
                   </video>
               {% endif%}
-      </div>
+    </div>
   </article>
 {% endblock %}
