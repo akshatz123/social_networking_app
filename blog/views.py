@@ -3,6 +3,7 @@ import random
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 
 from django_project.settings import AUTH_USER_MODEL
 from .models import Posts
@@ -80,7 +81,9 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super(PostUpdateView, self).form_valid(form)
+        super(PostUpdateView, self).form_valid(form)
+        messages.success(self.request, 'You have successfully updated the post')
+        return redirect(reverse_lazy('post-update', kwargs={'pk':self.object.uuid}))
 
     def test_func(self):
         post = self.get_object()
