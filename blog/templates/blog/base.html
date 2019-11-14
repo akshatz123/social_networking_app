@@ -37,13 +37,6 @@
             {% endif %}
              <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
             </div>
-            {% if messages %}
-        <ul class="messages">
-        {% for message in messages %}
-        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-        {% endfor %}
-        </ul>
-    {% endif %}
               <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
@@ -73,6 +66,13 @@
     <main role="main" class="container">
       <div class="row">
         <div class="col-md-8">
+             {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
           {% block content %} {% endblock %}
         </div>
         <div class="col-md-4">

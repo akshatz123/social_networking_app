@@ -1,5 +1,7 @@
 import random
 
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 
 from django_project.settings import AUTH_USER_MODEL
@@ -27,6 +29,8 @@ def home_view(request):
             'media': MEDIA_URL
         }
         return render(request, 'blog/home.html', context)
+    else:
+        return render(request, 'login')
 
 
 class PostDetailView(DetailView):
@@ -41,10 +45,11 @@ class PostDetailView(DetailView):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
     def get_context_data(self, **kwargs):
-        context = super(PostDetailView, self)\
+        context = super(PostDetailView, self) \
             .get_context_data(**kwargs)
         context['media'] = MEDIA_URL
         return context
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     """Post form has fields
@@ -59,7 +64,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super().form_valid(form)
+        return super(PostCreateView, self).form_valid(form)
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -71,11 +76,11 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     model = Posts
     fields = ['title', 'content', 'image', 'video']
-    success_url = '/blog'
+    # redirect({% url 'post-update' %})
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super().form_valid(form)
+        return super(PostUpdateView, self).form_valid(form)
 
     def test_func(self):
         post = self.get_object()
@@ -126,15 +131,6 @@ class UserPostListView(ListView):
 #     return HttpResponseRedirect(post.get_absolute_url())
 #
 #
-
-#
-# class PostDetailView(DetailView):
-#     """Only self post visible right now"""
-#     model = Posts
-#     context_object_name = 'post'
-#     template_name = 'blog/posts_detail.html'
-#     # is_liked = False
-
 
 def post_draft_list(request):
     posts = Posts.objects.all().order_by('created_date')
