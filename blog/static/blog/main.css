@@ -82,3 +82,6 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
+div {
+    word-wrap: break-word
+}
