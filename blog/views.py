@@ -1,5 +1,7 @@
 import random
 
+from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 
 from django_project.settings import AUTH_USER_MODEL
@@ -27,6 +29,8 @@ def home_view(request):
             'media': MEDIA_URL
         }
         return render(request, 'blog/home.html', context)
+    else:
+        return render(request, 'login')
 
 
 class PostDetailView(DetailView):
@@ -72,7 +76,7 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """
     model = Posts
     fields = ['title', 'content', 'image', 'video']
-    success_url = '/blog'
+    # redirect({% url 'post-update' %})
 
     def form_valid(self, form):
         form.instance.author = self.request.user
