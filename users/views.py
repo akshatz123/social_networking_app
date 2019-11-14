@@ -1,11 +1,12 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.db.models import Q
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
+from django_project.settings import MEDIA_URL
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
@@ -88,8 +89,8 @@ def search(request):
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None:
-            results = User.objects.filter(username=query)
-            return render(request, 'users/search.html', {'results': results})
+            results = User.objects.filter(Q(username=query)|Q(first_name=query)| Q(last_name=query))
+            return render(request, 'users/search.html', {'results': results, 'media':MEDIA_URL})
         else:
             context = {
                 'results': "Not found",

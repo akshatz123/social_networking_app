@@ -1,6 +1,8 @@
 import random
 
+from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy
 
 from django_project.settings import AUTH_USER_MODEL
 from .models import Posts
@@ -22,6 +24,7 @@ user = get_user_model()
 def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
     if request.user.is_authenticated:
+        print(request.user)
         context = {
             'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
             'media': MEDIA_URL
@@ -76,7 +79,9 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
-        return super(PostUpdateView, self).form_valid(form)
+        super(PostUpdateView, self).form_valid(form)
+        messages.success(self.request, 'You have successfully updated the post')
+        return redirect(reverse_lazy('post-update', kwargs={'pk': self.object.uuid}))
 
     def test_func(self):
         post = self.get_object()
