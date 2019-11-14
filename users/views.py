@@ -1,17 +1,20 @@
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.db.models import Q
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
+from django_project.settings import MEDIA_URL
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from users.models import Profile
+from django.contrib.auth.decorators import login_required
+from blog.models import Posts
 
 User = get_user_model()
 
@@ -88,8 +91,8 @@ def search(request):
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None:
-            results = User.objects.filter(username=query)
-            return render(request, 'users/search.html', {'results': results})
+            results = User.objects.filter(Q(username=query)|Q(first_name=query)| Q(last_name=query))
+            return render(request, 'users/search.html', {'results': results, 'media':MEDIA_URL})
         else:
             context = {
                 'results': "Not found",
@@ -145,7 +148,7 @@ def addfriend(request, pk):
     email.send()
     return render(request, 'users/addfriend.html', {})
 
-def addfriend_link(request, uidb64, token, pk):
+def addfriend_link(request, uidb64, token):
     """Adding a link  in email which is sent to friend through which one can accept or reject friend request"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
@@ -156,3 +159,15 @@ def addfriend_link(request, uidb64, token, pk):
         user.is_active = True
         user.save()
         return render(request, 'users/addfriend.html')
+
+@login_required(login_url='/login')
+def home(request):
+    """Display all the post of friends and own posts on the dashboard"""
+    # if request.user.is_authenticated:
+    context = {
+            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
+            'media': MEDIA_URL
+        }
+    return render(request, 'blog/home.html', context)
+    # else:
+    #     return render(request, 'users/login.html')
