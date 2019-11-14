@@ -1,32 +1,34 @@
 {% extends "blog/base.html" %}
-
-
 {% block content %}
     {% for post in posts %}
         <article class="media content-section">
-          <img class="rounded-circle article-img"
+          <img class="rounded-circle article-img" 
           src="{{ post.author.profile.image.url }}">
           <div class="media-body">
             <div class="article-metadata">
               <p>{{ post.author }} </p>
               <small class="text-muted">{{ post.date_posted}}</small>
             </div>
+
             <h2><a class="article-title" href="{% url 'post-detail' post.uuid %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
-              {% if post.image.url and post.video %}
+              {% if post.image and post.video %}
                 <img src = "{{post.image.url}}"/>
               <p></p>
-              <video width='400' controls autoplay >
+              <video width='400' controls>
                   <source src="{{media}}/{{post.video}}" type='video/mp4'/>
               </video>
-              {% elif post.image.url %}
-                  <img src="{{post.image.url}}">
+              {% elif post.image %}
+                  <img src="{{post.image.url}}" />
               {% elif post.video %}
-                  <video width='400' controls autoplay >
-                      <source src="{{media}}videos/{{post.video}}" type='video/mp4'/>
+                  <video width="400px" controls autoplay >
+                      <source src="{{media}}/{{post.video}}" type='video/mp4'/>
                   </video>
+              <p></p>
               {% endif%}
           </div>
+<!--             <button type="submit" name="object.id" value="{{post_id}}" class="btn btn-primary btn-sm mt-1 mb-1">Like</button>-->
+<!--  {{ total_likes }} Like {{ total_likes|pluralize }}-->
           <ul>
               {% for user_p in users %}
 		        <li>
@@ -41,7 +43,6 @@
         <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
       {% endif %}
-
       {% for num in page_obj.paginator.page_range %}
         {% if page_obj.number == num %}
           <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
@@ -49,11 +50,9 @@
           <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
         {% endif %}
       {% endfor %}
-
-      {% if page_obj.has_next %}
+    {% if page_obj.has_next %}
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
         <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
       {% endif %}
-
     {% endif %}
 {% endblock %}

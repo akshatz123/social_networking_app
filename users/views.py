@@ -9,9 +9,10 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
-from users.models import Profile, FriendRequest
+from users.models import Profile
+
 User = get_user_model()
 
 
@@ -34,17 +35,17 @@ def register(request):
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(email_subject, message, to=[to_email])
             email.send()
-            return HttpResponse('We have sent you an email, please confirm your email address to complete registration')
+            return render (request, 'users/email_sent.html')
     else:
         form = UserRegisterForm()
-    return render(request, 'users/login.html', {'form': form})
+    return render(request, 'users/register.html', {'form': form})
 
 
 def activate_account(request, uidb64, token):
     """Activate the account for the user using token and uid"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)        
+        user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
@@ -53,7 +54,7 @@ def activate_account(request, uidb64, token):
         login(request, user)
         return HttpResponse('Your account has been activate successfully')
     else:
-        return HttpResponse('Activation link is invalid!')
+        return render(request,'Activation link is invalid!')
 
 
 def users_list(request):
@@ -75,7 +76,7 @@ def profile(request):
             p_form.save()
             msg = 'Your account has been successfully updated!'
             messages.success(request, msg)
-            return redirect('profile')
+            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
     else:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user)
@@ -87,17 +88,71 @@ def search(request):
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None:
-            results = User.objects.filter(Q(first_name=query))
-            context = {'results': results}
-            return render(request, 'users/search.html', context)
+            results = User.objects.filter(username=query)
+            return render(request, 'users/search.html', {'results': results})
         else:
             context = {
                 'results': "Not found",
-                      }
-            return redirect(request, 'users/search.html', context)
+            }
+            return render(request, 'users/search.html', context)
     else:
         return render(request, 'base.html')
 
 
-def search_profile(request):
-    return render(request, 'users/search_profile.html', {})
+def search_profile(request, pk):
+    """User search Profile"""
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            u_form = UserUpdateForm(request.POST, instance=request.user)
+            p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+            msg = 'Your account has been successfully updated!'
+            messages.success(request, msg)
+            return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
+    else:
+        return render(request, 'users/search_profile.html')
+
+
+def profileDetail(request, pk):
+    user = get_object_or_404(User, pk=pk)
+    profile = get_object_or_404 (Profile, pk=pk)
+    context = dict(first_name=user.first_name,
+                   last_name=user.last_name,
+                   dateofbirth=user.dateofbirth,
+                   email=user.email,
+                   username=user.username,
+                   image = profile.image.url
+                   )
+    if request.user.id == user.pk:
+        return render(request, 'users/view_profile.html', context)
+    else:
+        return render(request, 'users/search_profile.html',context)
+
+
+def addfriend(request, pk):
+    """Sending friend request to email"""
+    user= get_object_or_404(User, pk=pk)
+    # current_site = get_current_site(request)
+    email_subject = 'Friend Request from '+ user.username
+    # message = render_to_string('users/addfriend.html', {
+    #             'user': user,
+    #             'domain': current_site.domain,
+    #             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+    #             'token': account_activation_token.make_token(user),
+    #         })
+    message = 'You have a friend request from ' + user.username
+    to_email = user.email
+    email = EmailMessage(email_subject, message, to=[to_email])
+    email.send()
+    return render(request, 'users/addfriend.html', {})
+
+def addfriend_link(request, uidb64, token, pk):
+    """Adding a link  in email which is sent to friend through which one can accept or reject friend request"""
+    try:
+        uid = force_bytes(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return render(request, 'users/addfriend.html')

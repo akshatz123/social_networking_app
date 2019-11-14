@@ -1,4 +1,5 @@
 {% load static %}
+{% load friendshiptags %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,27 +37,34 @@
             {% endif %}
              <a class="nav-item nav-link" href="{% url 'blog-about' %}">About</a>
             </div>
-            <!-- Navbar Right Side -->
+            {% if messages %}
+        <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+              <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
                 <div class="form-group">
-                    <form action="{% url  'friends_search' %}" method="GET"  value="{{request.GET.q}}">
+                    <form action="{% url 'friends_search' %}" method="GET"  value="{{request.GET.q}}">
                         <input class="form-control" name="q" value="{{request.GET.q}}" type="text" placeholder="Search" aria-label="Search" />
                     </form>
                  </div>
-                <a class= "nav-item nav-link" href="#">
-                    <button type="button" class="btn btn-primary">
-                    <img src="https://img.icons8.com/carbon-copy/100/000000/appointment-reminders--v1.png" width="15" height="15px">
-                        <span class="badge badge-light"></span>
-                        </button>
-                </a>
+<!--                <a class= "nav-item nav-link" href="#">-->
+<!--                    <button type="button" class="btn btn-primary">-->
+<!--                    <img src="https://img.icons8.com/carbon-copy/100/000000/appointment-reminders&#45;&#45;v1.png" width="15" height="15px">-->
+<!--                        <span class="badge badge-light"></span>-->
+<!--                        </button>-->
+<!--                </a>-->
                 <a class="nav-item nav-link" href="{% url 'post-create' %}">New Post</a>
-                <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
+                <a class="nav-item nav-link" href="{% url 'profile' user.id %}">Profile</a>
                 <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
-              {% else %}
+                {% else %}
                 <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
                 <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
-              {% endif %}
+                {% endif %}
             </div>
           </div>
         </div>
@@ -77,7 +85,8 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-        <hr>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js"></script>
+    <hr>
         {% block footer %}
             <div class="container marketing">
             <footer>

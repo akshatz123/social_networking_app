@@ -1,3 +1,5 @@
+import random
+
 from django.http import HttpResponseRedirect
 
 from django_project.settings import AUTH_USER_MODEL
@@ -28,25 +30,27 @@ def home_view(request):
 
 
 class PostDetailView(DetailView):
+    """Options to Update, delete the post"""
     if user.is_authenticated:
         model = Posts
+        success_url = 'blog/home.html'
     else:
-        redirect('/')
+        redirect('/blog')
 
     def get_queryset(self):
         return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
 
 class PostCreateView(LoginRequiredMixin, CreateView):
-
     """Post form has fields
         title
         content
         image
-        videofile
+        video
     """
     fields = ['title', 'content', 'image', 'video']
     model = Posts
+    success_url = '/blog'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -58,10 +62,11 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         title
         content
         image
-        videofile
+        video
     """
     model = Posts
     fields = ['title', 'content', 'image', 'video']
+    success_url = '/blog'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -75,8 +80,9 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Deletion of the post"""
     model = Posts
-    success_url = '/blog/'
+    success_url = '/blog'
 
     def test_func(self):
         post = self.get_object()
@@ -86,10 +92,12 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 def about(request):
+    """About page forthe company"""
     return render(request, 'blog/about.html', {'title': 'About'})
 
 
 class UserPostListView(ListView):
+    """Own post and friend blog are visible"""
     model = Posts
     template_name = 'blog/user_posts.html'  # <app>/<model>_<viewtype>.html
     context_object_name = 'posts'
@@ -100,8 +108,31 @@ class UserPostListView(ListView):
         user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
 
+#
+# def like_post(request):
+#     post = get_object_or_404(Posts, id=request.Post.get('post_id'))
+#     is_liked = False
+#     if post.likes.filter(id=request.user.id).exists():
+#         post.likes.remove(request.user)
+#         is_liked = False
+#     else:
+#         post.likes.add(request.user)
+#         is_liked = True
+#     return HttpResponseRedirect(post.get_absolute_url())
+#
+#
 
-def like_post(request):
-    post = get_object_or_404(Posts, id=request.Post.get('post_id'))
-    post.likes.add(request.user)
-    return HttpResponseRedirect(post.get_absolute_url())
+
+class PostDetailView(DetailView):
+    """Only self post visible right now"""
+    model = Posts
+    context_object_name = 'post'
+    template_name = 'blog/posts_detail.html'
+    # is_liked = False
+
+
+def post_draft_list(request):
+    posts = Posts.objects.all().order_by('created_date')
+    return render(request, 'blog/post_draft_list.html', {'posts': posts})
+
+

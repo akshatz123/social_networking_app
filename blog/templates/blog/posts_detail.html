@@ -9,15 +9,26 @@
         <small class="text-muted">{{ object.date_posted }}</small>
         {% if object.author == user %}
         <div>
-          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.uuid  %}">Update</a>
-          <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.uuid  %}">Delete</a>
-<!--          <button type="submit" name="object.id" value="{{post_id}}" class="btn btn-primary btn-sm mt-1 mb-1">Like</button>-->
+          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.uuid %}">Update</a>
+          <a class="btn btn-danger btn-sm mt-1 mb-1"  href="{% url 'post-delete' object.uuid  %}">Delete</a>
         </div>
-        {% endif %} 
-      </div>
+        {% endif %}
+        </div>
         <h2 class="article-title">{{ object.title }}</h2>
         <p class="article-content">{{ object.content }}</p>
-        <img src = "{{ object.image.url }}"/>
+     {% if object.image and object.video %}
+                <img src = "{{object.image.url}}"/>
+              <p></p>
+              <video width='400' controls>
+                  <source src="{{media}}/{{object.video}}" type='video/mp4'/>
+              </video>
+              {% elif post.image %}
+                  <img src="{{object.image.url}}">
+              {% elif post.video %}
+                  <video width="400px" controls type="mp4">
+                      <source src="{{media}}/{{object.video}}" type='video/mp4'/>
+                  </video>
+              {% endif%}
       </div>
   </article>
 {% endblock %}
