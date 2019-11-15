@@ -41,13 +41,9 @@ class UserUpdateForm(forms.ModelForm):
         fields = [
             'email',
             'dateofbirth',
-            # 'first_name',
+            'first_name',
+            'last_name'
         ]
-
-
-def past(value):
-    if value > date.today():
-        raise forms.ValidationError("Date cannot be of the future")
 
 
 class ProfileUpdateForm(forms.ModelForm):

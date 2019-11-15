@@ -1,5 +1,12 @@
 {% extends "blog/base.html" %}
 {% block content %}
+    {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+    {% endif %}
     {% for post in posts %}
         <article class="media content-section">
           <img class="rounded-circle article-img" 
@@ -11,15 +18,15 @@
             </div>
 
             <h2><a class="article-title" href="{% url 'post-detail' post.uuid %}">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content }}</p>
+            <p class="article-content" style="word-break:break-word;">{{ post.content }}</p>
               {% if post.image and post.video %}
-                <img src = "{{post.image.url}}"/>
+                <img src = "{{post.image.url}}" class="imageName"/>
               <p></p>
               <video width='400' controls>
                   <source src="{{media}}/{{post.video}}" type='video/mp4'/>
               </video>
               {% elif post.image %}
-                  <img src="{{post.image.url}}" />
+                  <img src="{{post.image.url}}" class="imageName"/>
               {% elif post.video %}
                   <video width="400px" controls autoplay >
                       <source src="{{media}}/{{post.video}}" type='video/mp4'/>
