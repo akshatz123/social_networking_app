@@ -134,19 +134,21 @@ def profile_detail(request, pk):
 
 def addfriend(request, pk):
     """Sending friend request to email"""
-    from_user = request.user
+    from_user = request.user.email
+    print(from_user)
     to_user = get_object_or_404(User, pk=pk)
-    email_subject = 'Friend Request from ' + from_user.username
+    print(to_user.email)
+    email_subject = 'Friend Request from ' + from_user
     # message = render_to_string('users/addfriend.html', {
     #             'user': user,
     #             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
     #             'token': account_activation_token.make_token(user),
     #         })
-    message = 'You have a friend request from ' + from_user.username
+    message = 'You have a friend request from ' + from_user
     to_email = to_user.email
     email = EmailMessage(email_subject, message, from_user, to=[to_email])
     email.send()
-    return render(request, 'users/addfriend', {})
+    return render(request, 'users/addfriend.html', {})
 
 
 def add_friend_link(request, uidb64, token):

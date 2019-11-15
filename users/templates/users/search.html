@@ -9,6 +9,7 @@
         <th>Profile Picture</th>
         <th>Name</th>
         <th>Email Address</th>
+        <th>Add friend</th>
     </tr>
     {% for result in results %}
 
@@ -18,6 +19,9 @@
         </td>
         <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }}</td>
         <td>{{result.email}}</td>
+        {%if not request.user.id == result.pk %}
+        <td><a href="{% url 'addfriend' result.id %}">Add Friend</a> </td>
+        {%endif%}
     </tr>
 
 {% endfor %}
