@@ -39,7 +39,7 @@ def register(request):
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(email_subject, message, to=[to_email])
             email.send()
-            return render (request, 'users/email_sent.html')
+            return render(request, 'users/email_sent.html')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
@@ -58,7 +58,7 @@ def activate_account(request, uidb64, token):
         login(request, user)
         return HttpResponse('Your account has been activate successfully')
     else:
-        return render(request,'Activation link is invalid!')
+        return render(request, 'Activation link is invalid!')
 
 
 def users_list(request):
@@ -91,15 +91,9 @@ def search(request):
     """Search feature used to search friends """
     if request.method == 'GET':
         query = request.GET.get('q')
-        if query is not None:
-            results = User.objects.filter(Q(username=query)|Q(first_name=query)| Q(last_name=query))
-            return render(request, 'users/search.html', {'results': results, 'media':MEDIA_URL})
-        else:
-            context = {
-                'results': "Not found",
-            }
-            return render(request, 'users/search.html', context)
-    else:
+        if query is not None and request.user:
+            results = User.objects.filter(Q(username=query) | Q(first_name=query) | Q(last_name=query))
+            return render(request, 'users/search.html', {'results': results, 'media': MEDIA_URL})
         return render(request, 'base.html')
 
 
@@ -118,40 +112,43 @@ def search_profile(request, pk):
 
 def profile_detail(request, pk):
     user = get_object_or_404(User, pk=pk)
-    profile = get_object_or_404 (Profile, pk=pk)
-    context = dict(first_name = user.first_name,
-                   last_name = user.last_name,
-                   dateofbirth = user.dateofbirth,
-                   email = user.email,
-                   username = user.username,
-                   image = profile.image.url
+    profile = get_object_or_404(Profile, pk=pk)
+    context = dict(first_name=user.first_name,
+                   last_name=user.last_name,
+                   dateofbirth=user.dateofbirth,
+                   email=user.email,
+                   username=user.username,
+                   image=profile.image.url
                    )
     if request.user.id == user.pk:
         return render(request, 'users/view_profile.html', context)
     else:
-        return render(request, 'users/search_profile.html',context)
+        return render(request, 'users/search_profile.html', context)
 
 
-
-def addfriend(request, pk):
+def add_friend(request, pk):
     """Sending friend request to email"""
-    from_user = request.user
-    profile = get_object_or_404(Profile, pk=pk)
-    to_user =  get_object_or_404(User, pk=pk)
-    email_subject = 'Friend Request from '+ from_user.username
-    # message = render_to_string('users/addfriend.html', {
-    #             'user': user,
-    #             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-    #             'token': account_activation_token.make_token(user),
-    #         })
-    message = 'You have a friend request from ' + from_user.username
+    name = request.user.first_name
+    from_user = request.user.email
+    # print(from_user)
+    current_site = get_current_site(request)
+    to_user = get_object_or_404(User, pk=pk)
+    # print(to_user.email)
+    email_subject = 'Friend Request from ' + name
+    message = render_to_string('users/add_friend.html', {
+                'user': user,
+                'domain': current_site,
+                'uid' : urlsafe_base64_encode(force_bytes(user.pk))
+             })
+    # message = 'You have  a friend request from' + from_user
     to_email = to_user.email
-    email = EmailMessage(email_subject, message, to=[to_email])
+    email = EmailMessage(email_subject, message, from_user, to=[to_email])
     email.send()
-    return render(request, 'users/addfriend.html', {})
+    return (request, 'users/add_friend.html')
 
 
-def addfriend_link(request, uidb64, token):
+
+def add_friend_link(request, uidb64, token):
     """Adding a link  in email which is sent to friend through which one can accept or reject friend request"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
@@ -159,22 +156,16 @@ def addfriend_link(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        return HttpResponse('Your account has been activate successfully')
+        return render(request, 'users/add_friend.html')
     else:
-        return (request, 'users/addfriend.html',{})
+        return (request, 'users/add_friend.html')
 
 
 @login_required(login_url='/login')
 def home(request):
     """Display all the post of friends and own posts on the dashboard"""
-    # if request.user.is_authenticated:
     context = {
-            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
-            'media': MEDIA_URL
-        }
+        'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
+        'media': MEDIA_URL
+    }
     return render(request, 'blog/home.html', context)
-    # else:
-    #     return render(request, 'users/login.html')
