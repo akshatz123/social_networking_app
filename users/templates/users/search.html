@@ -19,7 +19,7 @@
         </td>
         <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }}</td>
         <td>{{result.email}}</td>
-        {%if not request.user.id == result.pk %}
+        {% if not request.user.id == result.pk %}
         <td><a href="{% url 'addfriend' result.id %}">Add Friend</a> </td>
         {%endif%}
     </tr>

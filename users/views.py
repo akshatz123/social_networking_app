@@ -126,23 +126,23 @@ def profile_detail(request, pk):
         return render(request, 'users/search_profile.html', context)
 
 
-def addfriend(request, pk):
+
+def add_friend(request, pk):
     """Sending friend request to email"""
     from_user = request.user.email
-    print(from_user)
+    # print(from_user)
     to_user = get_object_or_404(User, pk=pk)
-    print(to_user.email)
+    # print(to_user.email)
     email_subject = 'Friend Request from ' + from_user
-    message = render_to_string('users/addfriend.html', {
+    message = render_to_string('users/add_friend.html', {
                 'user': user,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-    # message = 'You have a friend request from ' + from_user
     to_email = to_user.email
     email = EmailMessage(email_subject, message, from_user, to=[to_email])
     email.send()
-    return render(request, 'users/addfriend.html', {})
+    return render(request, 'users/add_friend.html', {})
 
 
 def add_friend_link(request, uidb64, token):
@@ -153,19 +153,16 @@ def add_friend_link(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
-        return render(request, 'users/addfriend.html', )
+        return render(request, 'users/add_friend.html', )
     else:
-        return (request, 'users/addfriend.html', {})
+        return (request, 'users/add_friend.html', {})
 
 
 @login_required(login_url='/login')
 def home(request):
     """Display all the post of friends and own posts on the dashboard"""
-    # if request.user.is_authenticated:
     context = {
         'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
         'media': MEDIA_URL
     }
     return render(request, 'blog/home.html', context)
-    # else:
-    #     return render(request, 'users/login.html')
