@@ -4,23 +4,24 @@
 {% if request.GET.q != '' %}
 {% if results %}
 <h1>Results for {{request.GET.q}} </h1>
-{% for result in results %}
-<table border="1px solid #fff">
+<table border="1px solid #fff" id = "friends">
     <tr>
         <th>Profile Picture</th>
         <th>Name</th>
         <th>Email Address</th>
     </tr>
+    {% for result in results %}
+
     <tr>
         <td>
-            <img src="{{result.profile.image.url}}" class="rounded-circle account-img" alt="No profile Pic">
+            <img src="{{result.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
         </td>
         <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }}</td>
         <td>{{result.email}}</td>
     </tr>
+{% endfor %}
 
 </table>
-{% endfor %}
 
 {% else %}
 No search results for this query

@@ -35,18 +35,18 @@ ul {
   border-radius: 3px;
   margin-bottom: 20px;
 }
-
 .article-title {
   color: #444444;
 }
 
 a.article-title:hover {
-  color: #428bca;
+  color: blue;
   text-decoration: none;
 }
 
 .article-content {
   white-space: pre-line;
+  word-break: break-all;
 }
 
 .article-img {
@@ -81,4 +81,31 @@ a.article-title:hover {
 
 .account-heading {
   font-size: 2.5rem;
+}
+
+.text_wrap {
+word-break:break-all;
+}
+
+#friends {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#friends td, #friends th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#friends tr:nth-child(even){background-color: #f2f2f2;}
+
+#friends tr:hover {background-color: #ddd;}
+
+#friends th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: lightslategray;
+  color: white;
 }

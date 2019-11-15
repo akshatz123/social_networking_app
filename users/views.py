@@ -13,6 +13,8 @@ from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from users.models import Profile
+from django.contrib.auth.decorators import login_required
+from blog.models import Posts
 
 User = get_user_model()
 
@@ -146,7 +148,7 @@ def addfriend(request, pk):
     email.send()
     return render(request, 'users/addfriend.html', {})
 
-def addfriend_link(request, uidb64, token, pk):
+def addfriend_link(request, uidb64, token):
     """Adding a link  in email which is sent to friend through which one can accept or reject friend request"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
@@ -157,3 +159,15 @@ def addfriend_link(request, uidb64, token, pk):
         user.is_active = True
         user.save()
         return render(request, 'users/addfriend.html')
+
+@login_required(login_url='/login')
+def home(request):
+    """Display all the post of friends and own posts on the dashboard"""
+    # if request.user.is_authenticated:
+    context = {
+            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
+            'media': MEDIA_URL
+        }
+    return render(request, 'blog/home.html', context)
+    # else:
+    #     return render(request, 'users/login.html')

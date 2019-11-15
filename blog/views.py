@@ -17,20 +17,21 @@ from django.views.generic import (
     DeleteView
 )
 from django_project.settings import MEDIA_URL
+from django.contrib.auth.decorators import login_required
 
 user = get_user_model()
 
-
+@login_required
 def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
-    if request.user.is_authenticated:
-        print(request.user)
+    if  request.user.is_authenticated:
         context = {
             'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
             'media': MEDIA_URL
         }
         return render(request, 'blog/home.html', context)
-
+    else:
+        return render(request, 'users/login.html')
 
 class PostDetailView(DetailView):
     """Options to Update, delete the post"""
