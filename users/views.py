@@ -6,16 +6,17 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+
 from blog.views import user
 from django_project.settings import MEDIA_URL
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
 from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
-from blog.models import Posts
+from blog.models import Posts, Friend
 
 User = get_user_model()
 
@@ -136,17 +137,24 @@ def add_friend(request, pk):
     current_site = get_current_site(request)
     to_user = get_object_or_404(User, pk=pk)
     # print(to_user.email)
-    email_subject = 'Friend Request from ' + name
-    message = render_to_string('users/add_friend.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid' : urlsafe_base64_encode(force_bytes(user.pk))
-             })
-    # message = 'You have  a friend request from' + from_user
-    to_email = to_user.email
-    email = EmailMessage(email_subject, message, from_user, to=[to_email])
-    email.send()
-    return render(request, 'users/add_friend.html')
+    try:
+        email_subject = 'Friend Request from ' + name
+        message = render_to_string('users/add_friend.html', {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid' : urlsafe_base64_encode(force_bytes(user.pk))
+                 })
+        # message = 'You have  a friend request from' + from_user
+        to_email = to_user.email
+        email = EmailMessage(email_subject, message, from_user, to=[to_email])
+        email.send()
+        context = {'name':name,'first_name':to_user.first_name,'last_name':to_user.last_name }
+        f = Friend(user_id=request.user.id, friend_id=to_user.id,status='Pending')
+        f.save()
+        return render(request, 'users/sent_friend_request_success.html', context)
+    except:
+        # messages.error("No such user")
+        redirect ("NO such user")
 
 @login_required(login_url='/login')
 def add_friend_link(request, uidb64):
@@ -157,8 +165,18 @@ def add_friend_link(request, uidb64):
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if user is not None:
-        return render(request, 'users/accept_friend.html',{"user":user})
+
+    return render(request, 'users/accept_friend.html',{"user":user, 'uidb64':uid, })
+
+
+def accept_friend_request(request, uidb64, status):
+    uid= force_bytes(urlsafe_base64_decode(uidb64))
+    friend_user = User.objects.get(pk=uid)
+    f = Friend.objects.filter(friend_id = friend_user)
+    if f:
+        f.status=status
+        f.save()
+    return render(request, 'base.html')
 
 @login_required(login_url='/login')
 def home(request):

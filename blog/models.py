@@ -78,3 +78,11 @@ class Posts(models.Model):
         def active(self, *args, **kwargs):
             # Post.objects.all() = super(PostManager, self).all()
             return super(self, self).filter(draft=False).filter(publish__lte=timezone.now())
+
+
+class Friend(models.Model):
+    status =models.CharField(max_length=10)
+    user_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'from_user')
+    friend_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="friend_user")
+    date_modified = models.DateTimeField(auto_now=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
