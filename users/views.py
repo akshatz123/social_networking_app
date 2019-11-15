@@ -6,6 +6,7 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from blog.views import user
 from django_project.settings import MEDIA_URL
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
@@ -115,14 +116,14 @@ def search_profile(request, pk):
         return render(request, 'users/search_profile.html')
 
 
-def profileDetail(request, pk):
+def profile_detail(request, pk):
     user = get_object_or_404(User, pk=pk)
     profile = get_object_or_404 (Profile, pk=pk)
-    context = dict(first_name=user.first_name,
-                   last_name=user.last_name,
-                   dateofbirth=user.dateofbirth,
-                   email=user.email,
-                   username=user.username,
+    context = dict(first_name = user.first_name,
+                   last_name = user.last_name,
+                   dateofbirth = user.dateofbirth,
+                   email = user.email,
+                   username = user.username,
                    image = profile.image.url
                    )
     if request.user.id == user.pk:
@@ -131,22 +132,24 @@ def profileDetail(request, pk):
         return render(request, 'users/search_profile.html',context)
 
 
+
 def addfriend(request, pk):
     """Sending friend request to email"""
-    user= get_object_or_404(User, pk=pk)
-    # current_site = get_current_site(request)
-    email_subject = 'Friend Request from '+ user.username
+    from_user = request.user
+    profile = get_object_or_404(Profile, pk=pk)
+    to_user =  get_object_or_404(User, pk=pk)
+    email_subject = 'Friend Request from '+ from_user.username
     # message = render_to_string('users/addfriend.html', {
     #             'user': user,
-    #             'domain': current_site.domain,
     #             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
     #             'token': account_activation_token.make_token(user),
     #         })
-    message = 'You have a friend request from ' + user.username
-    to_email = user.email
+    message = 'You have a friend request from ' + from_user.username
+    to_email = to_user.email
     email = EmailMessage(email_subject, message, to=[to_email])
     email.send()
     return render(request, 'users/addfriend.html', {})
+
 
 def addfriend_link(request, uidb64, token):
     """Adding a link  in email which is sent to friend through which one can accept or reject friend request"""
@@ -158,7 +161,11 @@ def addfriend_link(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        return render(request, 'users/addfriend.html')
+        login(request, user)
+        return HttpResponse('Your account has been activate successfully')
+    else:
+        return (request, 'users/addfriend.html',{})
+
 
 @login_required(login_url='/login')
 def home(request):
