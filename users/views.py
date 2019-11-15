@@ -91,15 +91,9 @@ def search(request):
     """Search feature used to search friends """
     if request.method == 'GET':
         query = request.GET.get('q')
-        if query is not None:
+        if query is not None and request.user:
             results = User.objects.filter(Q(username=query) | Q(first_name=query) | Q(last_name=query))
             return render(request, 'users/search.html', {'results': results, 'media': MEDIA_URL})
-        else:
-            context = {
-                'results': "Not found",
-            }
-            return render(request, 'users/search.html', context)
-    else:
         return render(request, 'base.html')
 
 
@@ -139,12 +133,12 @@ def addfriend(request, pk):
     to_user = get_object_or_404(User, pk=pk)
     print(to_user.email)
     email_subject = 'Friend Request from ' + from_user
-    # message = render_to_string('users/addfriend.html', {
-    #             'user': user,
-    #             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-    #             'token': account_activation_token.make_token(user),
-    #         })
-    message = 'You have a friend request from ' + from_user
+    message = render_to_string('users/addfriend.html', {
+                'user': user,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+    # message = 'You have a friend request from ' + from_user
     to_email = to_user.email
     email = EmailMessage(email_subject, message, from_user, to=[to_email])
     email.send()
