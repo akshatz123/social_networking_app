@@ -11,5 +11,5 @@ urlpatterns = [
         activate_account, name='activate'),
     path('<int:pk>', addfriend, name='addfriend'),
     url(r'^addfriend/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        addfriend_link, name='addfriend_link'),
+        add_friend_link, name='add_friend_link'),
 ]
