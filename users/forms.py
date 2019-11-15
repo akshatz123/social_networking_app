@@ -46,11 +46,6 @@ class UserUpdateForm(forms.ModelForm):
         ]
 
 
-def past(value):
-    if value > date.today():
-        raise forms.ValidationError("Date cannot be of the future")
-
-
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
