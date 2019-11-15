@@ -127,8 +127,10 @@ def profile_detail(request, pk):
 
 
 def add_friend(request, pk):
+    # import pdb
     """Sending friend request to email"""
     name = request.user.first_name
+    # pdb.set_trace()
     from_user = request.user.email
     # print(from_user)
     current_site = get_current_site(request)
@@ -137,29 +139,26 @@ def add_friend(request, pk):
     email_subject = 'Friend Request from ' + name
     message = render_to_string('users/add_friend.html', {
                 'user': user,
-                'domain': current_site,
+                'domain': current_site.domain,
                 'uid' : urlsafe_base64_encode(force_bytes(user.pk))
              })
     # message = 'You have  a friend request from' + from_user
     to_email = to_user.email
     email = EmailMessage(email_subject, message, from_user, to=[to_email])
     email.send()
-    return (request, 'users/add_friend.html')
+    return render(request, 'users/add_friend.html')
 
-
-
-def add_friend_link(request, uidb64, token):
+@login_required(login_url='/login')
+def add_friend_link(request, uidb64):
     """Adding a link  in email which is sent to friend through which one can accept or reject friend request"""
     try:
+        # import pdb ; pdb.set_trace()
         uid = force_bytes(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        return render(request, 'users/add_friend.html')
-    else:
-        return (request, 'users/add_friend.html')
-
+    if user is not None:
+        return render(request, 'users/accept_friend.html',{"user":user})
 
 @login_required(login_url='/login')
 def home(request):
