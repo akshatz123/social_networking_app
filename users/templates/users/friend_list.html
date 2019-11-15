@@ -3,13 +3,13 @@
 {% block content %}
 {% if request.GET.q != '' %}
 {% if results %}
-<h1>Results for {{request.GET.q}} </h1>
+<h1>Status of friend_requests</h1>
 <table border="1px solid #fff" id = "friends">
     <tr>
         <th>Profile Picture</th>
         <th>Name</th>
         <th>Email Address</th>
-        <th>Add friend</th>
+        <th>Status</th>
     </tr>
     {% for result in results %}
 
@@ -19,8 +19,12 @@
         </td>
         <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }}</td>
         <td>{{result.email}}</td>
-        {%if not request.user.id == result.pk %}
-        <td><a href="{% url 'addfriend' result.id %}">Add Friend</a> </td>
+        {%if status == accepted %}
+        <td>Added</td>
+        {% elif status == pending %}
+        <td>Pending</td>
+        {% elif status == cancel %}
+        <td>Rejected</td>
         {%endif%}
     </tr>
 
