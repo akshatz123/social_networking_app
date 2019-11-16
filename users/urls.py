@@ -3,7 +3,6 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
-    # path('friendship', include('friendship.urls')),
     path('<int:pk>', add_friend, name='addfriend'),
     path('profile/', profile, name='profile'),
     path('search/', search, name='friends_search'),
