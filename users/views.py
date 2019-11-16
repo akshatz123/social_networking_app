@@ -144,7 +144,7 @@ def add_friend(request, pk):
     email = EmailMessage(email_subject, message, from_user, to=[to_email])
     email.send()
     context = {'name':name,'first_name':to_user.first_name,'last_name':to_user.last_name }
-    f = Friend(from_user=request.user.objects, to_user_id=to_user, status= "Pending")
+    f = Friend(from_user=request.user.objects, to_user=to_user, status= "Pending")
     f.save()
     return render(request, 'users/sent_friend_request_success.html', context)
 
