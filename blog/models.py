@@ -1,11 +1,9 @@
 from datetime import timezone
-from comments.models import Comment
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
 from django_project.settings import AUTH_USER_MODEL
-from friendship.models import Friend, Follow, Block
 import uuid
 
 
@@ -69,12 +67,16 @@ class Posts(models.Model):
         if self.image and hasattr(self.image, 'url'):
             return self.image.url
 
-    def comments(self):
-        instance = self
-        qs = Comment.objects.filter_by_instance(instance)
-        return qs
 
     class PostManager(models.Manager):
         def active(self, *args, **kwargs):
             # Post.objects.all() = super(PostManager, self).all()
             return super(self, self).filter(draft=False).filter(publish__lte=timezone.now())
+
+
+class Friend(models.Model):
+    status =models.CharField(max_length=10)
+    user_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'from_user')
+    friend_id = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="friend_user")
+    date_modified = models.DateTimeField(auto_now=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True, null=True)
