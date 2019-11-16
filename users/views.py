@@ -6,15 +6,15 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
+from blog.models import Posts, Friend
+from blog.views import user
 from django_project.settings import MEDIA_URL
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from django.contrib.auth import get_user_model, login
-from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
-from blog.models import Posts
 
 User = get_user_model()
 
@@ -38,7 +38,7 @@ def register(request):
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(email_subject, message, to=[to_email])
             email.send()
-            return render (request, 'users/email_sent.html')
+            return render(request, 'users/email_sent.html')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
@@ -55,9 +55,9 @@ def activate_account(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return HttpResponse('Your account has been activate successfully')
+        return render(request,'users/activated_account.html')
     else:
-        return render(request,'Activation link is invalid!')
+        return render(request, 'users/invalid_link.html')
 
 
 def users_list(request):
@@ -90,15 +90,9 @@ def search(request):
     """Search feature used to search friends """
     if request.method == 'GET':
         query = request.GET.get('q')
-        if query is not None:
-            results = User.objects.filter(Q(username=query)|Q(first_name=query)| Q(last_name=query))
-            return render(request, 'users/search.html', {'results': results, 'media':MEDIA_URL})
-        else:
-            context = {
-                'results': "Not found",
-            }
-            return render(request, 'users/search.html', context)
-    else:
+        if query is not None and request.user:
+            results = User.objects.filter(Q(username=query) | Q(first_name=query) | Q(last_name=query))
+            return render(request, 'users/search.html', {'results': results, 'media': MEDIA_URL})
         return render(request, 'base.html')
 
 
@@ -115,59 +109,73 @@ def search_profile(request, pk):
         return render(request, 'users/search_profile.html')
 
 
-def profileDetail(request, pk):
+def profile_detail(request, pk):
     user = get_object_or_404(User, pk=pk)
-    profile = get_object_or_404 (Profile, pk=pk)
+    profile = get_object_or_404(Profile, pk=pk)
     context = dict(first_name=user.first_name,
                    last_name=user.last_name,
                    dateofbirth=user.dateofbirth,
                    email=user.email,
                    username=user.username,
-                   image = profile.image.url
+                   image=profile.image.url
                    )
     if request.user.id == user.pk:
         return render(request, 'users/view_profile.html', context)
     else:
-        return render(request, 'users/search_profile.html',context)
+        return render(request, 'users/search_profile.html', context)
 
 
-def addfriend(request, pk):
+@login_required(login_url='login/')
+def add_friend(request, pk):
     """Sending friend request to email"""
-    user= get_object_or_404(User, pk=pk)
-    # current_site = get_current_site(request)
-    email_subject = 'Friend Request from '+ user.username
-    # message = render_to_string('users/addfriend.html', {
-    #             'user': user,
-    #             'domain': current_site.domain,
-    #             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-    #             'token': account_activation_token.make_token(user),
-    #         })
-    message = 'You have a friend request from ' + user.username
-    to_email = user.email
-    email = EmailMessage(email_subject, message, to=[to_email])
+    name = request.user.first_name
+    from_user = request.user.email
+    current_site = get_current_site(request)
+    to_user = get_object_or_404(User, pk=pk)
+    email_subject = 'Friend Request from ' + name
+    message = render_to_string('users/add_friend.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid' : urlsafe_base64_encode(force_bytes(user.pk))
+             })
+    # message = 'You have  a friend request from' + from_user
+    to_email = to_user.email
+    email = EmailMessage(email_subject, message, from_user, to=[to_email])
     email.send()
-    return render(request, 'users/addfriend.html', {})
+    context = {'name':name,'first_name':to_user.first_name,'last_name':to_user.last_name }
+    f = Friend(from_user=request.user.id,to_user=to_user.id,status= "Pending")
+    f.save()
+    return render(request, 'users/sent_friend_request_success.html', context)
 
-def addfriend_link(request, uidb64, token):
+
+@login_required(login_url='/login')
+def add_friend_link(request, uidb64):
     """Adding a link  in email which is sent to friend through which one can accept or reject friend request"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        return render(request, 'users/addfriend.html')
+
+    return render(request, 'users/accept_friend.html',{"user":user, 'uidb64':uid})
+
+
+def accept_friend_request(request, uidb64, status):
+    uid= force_bytes(urlsafe_base64_decode(uidb64))
+    friend_user = User.objects.get(pk=Friend.to_user.id)
+    f = Friend.objects.filter(friend_id = friend_user)
+    if f:
+        f.status=status
+        f.save()
+        return request,"users/friend_list.html"
+    else:
+        return render(request, 'blog/base.html')
 
 @login_required(login_url='/login')
 def home(request):
     """Display all the post of friends and own posts on the dashboard"""
-    # if request.user.is_authenticated:
     context = {
-            'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
-            'media': MEDIA_URL
-        }
+        'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
+        'media': MEDIA_URL
+    }
     return render(request, 'blog/home.html', context)
-    # else:
-    #     return render(request, 'users/login.html')
