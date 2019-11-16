@@ -154,7 +154,7 @@ def add_friend(request, pk):
         return render(request, 'users/sent_friend_request_success.html', context)
     except:
         # messages.error("No such user")
-        redirect ("NO such user")
+        return render (request, )
 
 @login_required(login_url='/login')
 def add_friend_link(request, uidb64):
