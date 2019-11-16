@@ -1,3 +1,4 @@
+
 {% extends "blog/base.html" %}
 {% block content %}
     <div class="content-section">
@@ -5,12 +6,12 @@
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Confirm Friend Request</legend>
-                <h2>Are you sure you want to confirm the friend request of "{{ user.id }}"</h2>
+                <h5>Are you sure you want to confirm the friend request of {{ user.id }}</h5>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit"><a href="{% url 'accept_friend_request' uidb64 status %}">Yes</button>
+                    <a class="btn btn-danger" href="#">Reject</a>
+                </div>
             </fieldset>
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">Yes</button>
-                <a class="btn btn-danger" href="#">Reject</a>
-            </div>
         </form>
     </div>
 {% endblock content %}

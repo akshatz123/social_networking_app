@@ -12,12 +12,11 @@
         <th>Status</th>
     </tr>
     {% for result in results %}
-
     <tr>
         <td>
             <img src="{{result.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
         </td>
-        <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }}</td>
+        <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }} </td>
         <td>{{result.email}}</td>
         {%if status == accepted %}
         <td>Added</td>

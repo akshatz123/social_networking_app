@@ -1,3 +1,4 @@
+ 
 Hi {{ user.username }},
 You have sent a friend request from {{user.first_name }} {{user.last_name}}
-http://{{ domain }}{% url 'add_friend_link' uidb64=uid token=token %}
+http://{{domain}}{% url 'add_friend_link' uidb64=uid %}
