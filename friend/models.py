@@ -21,5 +21,5 @@ class Friend(models.Model):
         unique_together = (('from_user', 'to_user'),)
 
     def __str__(self):
-        return self.to_user
+        return self.to_user.email
 
