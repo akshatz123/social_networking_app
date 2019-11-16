@@ -57,9 +57,9 @@ def activate_account(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return HttpResponse('Your account has been activate successfully')
+        return render(request,'users/activated_account.html')
     else:
-        return render(request, 'Activation link is invalid!')
+        return render(request, 'users/invalid_link.html')
 
 
 def users_list(request):
