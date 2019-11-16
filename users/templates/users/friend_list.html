@@ -16,8 +16,8 @@
         <td>
             <img src="{{result.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
         </td>
-        <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }} </td>
-        <td>{{result.email}}</td>
+        <td><a href="{% url 'profile' id %}">{{first_name}} {{ last_name }} </td>
+        <td>{{email}}</td>
         {%if status == accepted %}
         <td>Added</td>
         {% elif status == pending %}
