@@ -1,6 +1,0 @@
-{% extends 'blog/base.html' %}
-{% block content %}
-Hi {{ user.username }},
-You have sent a friend request from {{user.first_name }} {{user.last_name}}
-<button type="button" class="btn btn-outline-info"><a href="{% url 'blog-home' %}">Home</a></button>
-{% endblock %}

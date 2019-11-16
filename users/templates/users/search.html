@@ -12,14 +12,16 @@
         <th>Add friend</th>
     </tr>
     {% for result in results %}
-
+    {% if request.user.id == result.pk %}
+    {{pass}}
+    {% else %}
     <tr>
         <td>
             <img src="{{result.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
         </td>
         <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }}</td>
         <td>{{result.email}}</td>
-        {%if not request.user.id == result.pk %}
+
         <td><a href="{% url 'addfriend' result.id %}">Add Friend</a> </td>
         {%endif%}
     </tr>
