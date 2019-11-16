@@ -15,7 +15,7 @@ class User(AbstractUser):
     """
     email = models.EmailField(max_length=255, unique=True)
     dateofbirth = models.DateField(null=True)
-    # friend_id = models.ManyToManyField('self')
+    friend_id = models.ManyToManyField('self')
     is_superuser = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
@@ -28,7 +28,11 @@ class User(AbstractUser):
 
 class Posts(models.Model):
     """
-    Post has title, content, image, video and author fields which are visible to user.
+    Post has
+    title,
+    content,
+    image,
+    video
     """
 
     title = models.CharField(max_length=100, verbose_name="Title:")
@@ -71,26 +75,6 @@ class Posts(models.Model):
         def active(self, *args, **kwargs):
             # Post.objects.all() = super(PostManager, self).all()
             return super(self, self).filter(draft=False).filter(publish__lte=timezone.now())
-
-
-class Friend(models.Model):
-
-    status = models.CharField(max_length=10)
-    from_user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'from_user')
-    to_user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="friend_user")
-    date_modified = models.DateTimeField(auto_now=True, blank=True)
-    date_created = models.DateTimeField(auto_now_add=True, null=True)
-
-    # def create(self,request, **kwargs, ):
-    #     friend = self.create(from_user_id=request.user.id, status="Pending")
-    #     return friend
-
-    class Meta:
-        unique_together = (('from_user', 'to_user'),)
-
-    # def __str__(self):
-    #     return self.to_user
-
 
 
 
