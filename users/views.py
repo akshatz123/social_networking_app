@@ -137,24 +137,21 @@ def add_friend(request, pk):
     current_site = get_current_site(request)
     to_user = get_object_or_404(User, pk=pk)
     # print(to_user.email)
-    try:
-        email_subject = 'Friend Request from ' + name
-        message = render_to_string('users/add_friend.html', {
-                    'user': user,
-                    'domain': current_site.domain,
-                    'uid' : urlsafe_base64_encode(force_bytes(user.pk))
-                 })
-        # message = 'You have  a friend request from' + from_user
-        to_email = to_user.email
-        email = EmailMessage(email_subject, message, from_user, to=[to_email])
-        email.send()
-        context = {'name':name,'first_name':to_user.first_name,'last_name':to_user.last_name }
-        f = Friend(user_id=request.user.id, friend_id=to_user.id,status='Pending')
-        f.save()
-        return render(request, 'users/sent_friend_request_success.html', context)
-    except:
-        # messages.error("No such user")
-        return render (request, 'users/no_such_user.html')
+    email_subject = 'Friend Request from ' + name
+    message = render_to_string('users/add_friend.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid' : urlsafe_base64_encode(force_bytes(user.pk))
+             })
+    # message = 'You have  a friend request from' + from_user
+    to_email = to_user.email
+    email = EmailMessage(email_subject, message, from_user, to=[to_email])
+    email.send()
+    context = {'name':name,'first_name':to_user.first_name,'last_name':to_user.last_name }
+    f = Friend(user_id=request.user.id, friend_id=to_user.id,status='Pending')
+    f.save()
+    return render(request, 'users/sent_friend_request_success.html', context)
+
 
 @login_required(login_url='/login')
 def add_friend_link(request, uidb64):
