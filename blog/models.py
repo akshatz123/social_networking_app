@@ -76,21 +76,20 @@ class Posts(models.Model):
 class Friend(models.Model):
 
     status = models.CharField(max_length=10)
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name = 'from_user')
+    from_user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'from_user')
     to_user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="friend_user")
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
 
-    def create(self,request, **kwargs, ):
-        friend = self.create(from_user=request.user.id, status="Pending")
-        return friend
-
+    # def create(self,request, **kwargs, ):
+    #     friend = self.create(from_user_id=request.user.id, status="Pending")
+    #     return friend
 
     class Meta:
         unique_together = (('from_user', 'to_user'),)
 
-    def __str__(self):
-        return self.to_user
+    # def __str__(self):
+    #     return self.to_user
 
 
 
