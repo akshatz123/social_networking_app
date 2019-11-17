@@ -7,7 +7,7 @@
                 <legend class="border-bottom mb-4">Confirm Friend Request</legend>
                 <h5>Are you sure you want to confirm the friend request of {{ user.id }}</h5>
                 <div class="form-group">
-                    <a class="btn btn-primary" href="{% url 'accept_friend_request' uidb64=uid %}">Yes</a>
+                    <a class="btn btn-primary" href="{% url 'accept_friend_request' uidb64=uid %}">Accept</a>
                     <a class="btn btn-danger" href="{% url 'blog-home'  %}">Reject</a>
                 </div>
             </fieldset>
