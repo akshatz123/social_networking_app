@@ -24,19 +24,28 @@ def add_friend_link(request, uidb64):
 @login_required(login_url='/login')
 def accept_friend_request(request, uidb64, status):
     """Accept button will lead to entry in database as accepted and reject button will lead to entry in database as rejected  based on status flag"""
+    Friend.status = "pending"
+    # print(type(Friend))
     try:
+        # print('IN try ')
         uid = urlsafe_base64_decode(uidb64)
-        friend_user = User.objects.get(id=Friend.to_user.id)
-        print('IN try')
+        # print(uid)
+        friend_user = User.objects.filter(id=Friend.to_user.id)
+        # print(friend_user)
+        # print(User.objects.get(id=Friend.to_user.id))
         f = Friend.objects.filter(friend_id = friend_user)
         if f:
             f.status=status
             f.save()
-            f.status = "Accepted"
+            f.status = "accepted"
             return render(request, 'users/friend_list.html', {"uidb64": uid, "status": status})
+        else:
+            f.status = "rejected"
+            f.save()
+            return render(request, 'users/friend_list.html', {'uidb64':uid, 'status':status})
     except AttributeError:
-
         return render(request, 'blog/base.html')
+
 
 def friend_list(request):
     context = {
