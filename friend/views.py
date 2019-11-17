@@ -25,13 +25,17 @@ def add_friend_link(request, uidb64):
 def accept_friend_request(request, uidb64, status):
     """Accept button will lead to entry in database as accepted and reject button will lead to entry in database as rejected  based on status flag"""
     uid= urlsafe_base64_decode(uidb64).decode()
-    print(status)
-    friend_user = User.objects.get(pk=Friend.to_user.id)
+    friend_user = User.objects.get(id=Friend.to_user.auto_created)
+    print(friend_user)
     f = Friend.objects.filter(friend_id = friend_user)
-    if f:
+    if status is "Accepted":
         f.status=status
         f.save()
-        return request, "users/friend_list.html", {"uid":uidb64}
+        return request, "users/friend_list.html", {"uid": uidb64, status: "Accepted"}
+    elif status == "Rejected":
+        f.status = status
+        f.save()
+        return request, "users/friend_list.html", {"uid":uidb64, "status": "Rejected"}
     else:
         return render(request, 'blog/base.html')
 
