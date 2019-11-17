@@ -21,16 +21,16 @@ def add_friend_link(request, uidb64):
     return render(request, 'users/accept_friend.html', {"uid": uidb64, "user": user})
 
 
-
 @login_required(login_url='/login')
 def accept_friend_request(request, uidb64, status):
     uid= urlsafe_base64_decode(uidb64).decode()
+    print(status)
     friend_user = User.objects.get(pk=Friend.to_user.id)
     f = Friend.objects.filter(friend_id = friend_user)
     if f:
         f.status=status
         f.save()
-        return (request,"users/friend_list.html", {"status":status})
+        return request, "users/friend_list.html", {"uid":uidb64}
     else:
         return render(request, 'blog/base.html')
 
