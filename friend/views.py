@@ -23,6 +23,7 @@ def add_friend_link(request, uidb64):
 
 @login_required(login_url='/login')
 def accept_friend_request(request, uidb64, status):
+    """Accept button will lead to entry in database as accepted and reject button will lead to entry in database as rejected  based on status flag"""
     uid= urlsafe_base64_decode(uidb64).decode()
     print(status)
     friend_user = User.objects.get(pk=Friend.to_user.id)
