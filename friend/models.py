@@ -13,13 +13,6 @@ class Friend(models.Model):
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
 
-    def create(self,request, **kwargs, ):
-        friend = self.create(from_user_id=request.user.id, status="Pending")
-        return friend
-
-    class Meta:
-        unique_together = (('from_user', 'to_user'),)
-
     def __str__(self):
         return self.to_user.email
 
