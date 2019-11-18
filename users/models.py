@@ -6,7 +6,6 @@ from django_project.settings import AUTH_USER_MODEL
 class Profile(models.Model):
     """Updating profile of particular user """
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
-    friend_id = models.ManyToManyField("Profile", blank=True)
     image = models.ImageField(default='default.jpg', upload_to="profile_pics", null=True)
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)

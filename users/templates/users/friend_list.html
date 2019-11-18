@@ -1,9 +1,7 @@
 {% extends 'blog/base.html' %}
 {% load static %}
 {% block content %}
-{% if request.GET.q != '' %}
-{% if results %}
-<h1>Status of friend_requests</h1>
+<h1>Status of friend requests</h1>
 <table border="1px solid #fff" id = "friends">
     <tr>
         <th>Profile Picture</th>
@@ -14,15 +12,15 @@
     {% for result in results %}
     <tr>
         <td>
-            <img src="{{result.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
+            <img src="{{result.to_user.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
         </td>
-        <td><a href="{% url 'profile' id %}">{{first_name}} {{ last_name }} </td>
-        <td>{{email}}</td>
-        {%if status == accepted %}
+        <td><a href="{% url 'profile' %}">{{result.to_user.first_name}} {{result.to_user.last_name }} </a></td>
+        <td>{{ result.to_user.email }}</td>
+        {% if result.status == "accepted" %}
         <td>Added</td>
-        {% elif status == pending %}
+        {% elif result.status == "pending" %}
         <td>Pending</td>
-        {% elif status == rejected %}
+        {% elif result.status == "rejected" %}
         <td>Rejected</td>
         {%endif%}
     </tr>
@@ -30,9 +28,4 @@
 {% endfor %}
 
 </table>
-
-{% else %}
-No search results for this query
-{% endif %}
-{% endif %}
 {% endblock  %}
