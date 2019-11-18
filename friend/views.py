@@ -26,8 +26,9 @@ def accept_friend_request(request, uidb64, status):
     Friend.status = "pending"
     print(Friend.status)
     try:
+        to_user = get_object_or_404(User, id)
         uid = urlsafe_base64_decode(uidb64).decode()
-        friend_user = Friend.objects.get(id=get_object_or_404(User,id))
+        friend_user = Friend.objects.get(id=to_user)
         print(friend_user)
         f = Friend.objects.filter(friend_id = friend_user)
         print(f)
