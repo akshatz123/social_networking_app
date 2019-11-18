@@ -134,7 +134,13 @@ def add_friend(request, pk):
     name = request.user.first_name
     from_user = request.user.email
     current_site = get_current_site(request)
+    print("from_user,to_user")
     to_user = get_object_or_404(User, pk=pk)
+    print(from_user, to_user)
+    print("type(from_user),type(to_user)")
+    print(type(from_user), type(to_user))
+    print("request.user.id,pk")
+    print(request.user.id, pk)
     email_subject = 'Friend Request from ' + name
     message = render_to_string('users/add_friend.html', {
                 'user': user,
@@ -148,7 +154,7 @@ def add_friend(request, pk):
     context = {'name':name,'first_name':to_user.first_name,'last_name':to_user.last_name }
     f = Friend(from_user, to_user=to_user, status= "pending")
     f.save()
-    return render(request, 'users/sent_friend_request_success.html', context)
+    return render(request, 'users/sent_friend_request_success.html')
 
 
 @login_required(login_url='/login')
