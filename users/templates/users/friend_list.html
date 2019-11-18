@@ -12,10 +12,10 @@
     {% for result in results %}
     <tr>
         <td>
-            <img src="{{profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
+            <img src="{{result.to_user.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
         </td>
-        <td><a href="{% url 'profile' %}">{{result.first_name}} {{result.last_name }} </a></td>
-        <td>{{ email }}</td>
+        <td><a href="{% url 'profile' %}">{{result.to_user.first_name}} {{result.to_user.last_name }} </a></td>
+        <td>{{ result.to_user.email }}</td>
         {% if result.status == "accepted" %}
         <td>Added</td>
         {% elif result.status == "pending" %}
