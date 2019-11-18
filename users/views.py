@@ -44,7 +44,6 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
 
-
 def activate_account(request, uidb64, token):
     """Activate the account for the user using token and uid"""
     try:
@@ -60,7 +59,6 @@ def activate_account(request, uidb64, token):
     else:
         return render(request, 'users/invalid_link.html')
 
-
 def users_list(request):
     """TO list all friends of a user"""
     users = Profile.objects.exclude(user=request.user)
@@ -68,7 +66,6 @@ def users_list(request):
         'users': users
     }
     return render(request, "home.html", context)
-
 
 def profile(request):
     """Profile to view the profile"""

@@ -26,9 +26,9 @@ def accept_friend_request(request, uidb64, status):
     Friend.status = "pending"
     print(Friend.status)
     try:
-        to_user = get_object_or_404(User, id)
+        # to_user = get_object_or_404(User, id)
         uid = urlsafe_base64_decode(uidb64).decode()
-        friend_user = Friend.objects.get(id=to_user)
+        friend_user = User.objects.get(id=Friend.to_user.id)
         print(friend_user)
         f = Friend.objects.filter(friend_id = friend_user)
         print(f)
@@ -41,7 +41,7 @@ def accept_friend_request(request, uidb64, status):
             f.status = "rejected"
             f.save()
             return render(request, 'users/friend_list.html', {'uidb64':uid, 'status':status})
-    except FieldError:
+    except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
 

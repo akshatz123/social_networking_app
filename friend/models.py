@@ -1,3 +1,4 @@
+from auth_mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -5,7 +6,7 @@ from django.db import models
 from django_project.settings import AUTH_USER_MODEL
 
 
-class Friend(models.Model):
+class Friend(models.Model, LoginRequiredMixin):
     status = models.CharField(max_length=10)
     from_user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name = 'from_user')
     to_user = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="to_user")
