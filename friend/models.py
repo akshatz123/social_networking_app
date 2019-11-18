@@ -12,7 +12,7 @@ class Friend(models.Model):
     date_modified = models.DateTimeField(auto_now=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
 
-    def create(self,request, **kwargs, ):
+    def create(self,request, **kwargs):
         friend = self.create(from_user_id=request.user.id, status="pending")
         return friend
 
