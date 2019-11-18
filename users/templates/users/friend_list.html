@@ -5,8 +5,7 @@
 <table border="1px solid #fff" id = "friends">
     <tr>
         <th>Profile Picture</th>
-        <th>Name</th>
-        <th>Email Address</th>
+        <th>Details</th>
         <th>Status</th>
     </tr>
     {% for result in results %}
@@ -14,8 +13,14 @@
         <td>
             <img src="{{result.to_user.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
         </td>
-        <td><a href="{% url 'profile' %}">{{result.to_user.first_name}} {{result.to_user.last_name }} </a></td>
-        <td>{{ result.to_user.email }}</td>
+        <td>
+            <ul>
+                <li>
+                    <a href="{% url 'profile' result.to_user.id %}">{{result.to_user.first_name}} {{result.to_user.last_name }}</a>
+                </li>
+                <li>{{ result.to_user.email }}</li>
+            </ul>
+        </td>
         {% if result.status == "accepted" %}
         <td>Added</td>
         {% elif result.status == "pending" %}
