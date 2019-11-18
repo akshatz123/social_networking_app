@@ -23,10 +23,8 @@ def add_friend_link(request, uidb64):
 def accept_friend_request(request, uidb64, status):
     """Accept button will lead to entry in database as accepted and reject button will lead to entry in database as rejected  based on status flag"""
     Friend.status = "pending"
-    # print(Friend.status)
     try:
         uid = urlsafe_base64_decode(uidb64)
-        print(Friend.from_user.name)
         friend_user = Friend.objects.get(id=Friend.to_user_id)
         print(friend_user)
         f = Friend.objects.filter(friend_id = friend_user)
