@@ -8,7 +8,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from blog.models import Posts
 from blog.views import user
-from django_project.settings import MEDIA_URL
+from django_project.settings import MEDIA_URL, AUTH_USER_MODEL
 from friend.models import Friend
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
@@ -144,8 +144,9 @@ def add_friend(request, pk):
     to_email = to_user.email
     email = EmailMessage(email_subject, message, from_user, to=[to_email])
     email.send()
+    from_user = User.objects.get(id=request.user.id).id
     context = {'name':name,'first_name':to_user.first_name,'last_name':to_user.last_name }
-    f = Friend(from_user_id=request.user.id, to_user=to_user, status= "Pending")
+    f = Friend(from_user    , to_user=User.objects.get(id= pk), status= "pending")
     f.save()
     return render(request, 'users/sent_friend_request_success.html', context)
 
