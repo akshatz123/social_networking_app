@@ -56,7 +56,7 @@ def activate_account(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return render(request,'users/activated_account.html')
+        return render(request, 'users/activated_account.html')
     else:
         return render(request, 'users/invalid_link.html')
 
@@ -126,35 +126,27 @@ def profile_detail(request, pk):
         return render(request, 'users/search_profile.html', context)
 
 
-
-
 @login_required(login_url='login/')
 def add_friend(request, pk):
     """Sending friend request to email"""
     name = request.user.first_name
-    from_user = request.user.email
+    from_user = get_object_or_404(User, id=request.user.id)
     current_site = get_current_site(request)
-    print("from_user,to_user")
     to_user = get_object_or_404(User, pk=pk)
-    print(from_user, to_user)
-    print("type(from_user),type(to_user)")
-    print(type(from_user), type(to_user))
-    print("request.user.id,pk")
-    print(request.user.id, pk)
     email_subject = 'Friend Request from ' + name
     message = render_to_string('users/add_friend.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid' : urlsafe_base64_encode(force_bytes(user.pk))
-             })
+        'user': user,
+        'domain': current_site.domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk))
+    })
     to_email = to_user.email
-    email = EmailMessage(email_subject, message, from_user, to=[to_email])
+    email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
     email.send()
-    from_user = User.objects.get(request.user)
-    context = {'name':name,'first_name':to_user.first_name,'last_name':to_user.last_name }
-    f = Friend(from_user, to_user=to_user, status= "pending")
+    context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
+    f = Friend(from_user=from_user, to_user=to_user, status="pending")
     f.save()
-    return render(request, 'users/sent_friend_request_success.html')
+
+    return render(request, 'users/sent_friend_request_success.html', context)
 
 
 @login_required(login_url='/login')
