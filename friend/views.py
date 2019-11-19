@@ -3,10 +3,9 @@ from django.contrib.auth.models import User
 from django.core.exceptions import FieldError
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth import get_user_model
 from .models import Friend
-from django.forms.models import model_to_dict
 User = get_user_model()
 
 
@@ -27,7 +26,7 @@ def accept_friend_request(request, uidb64, status):
     based on status flag"""
     try:
         from_uid = urlsafe_base64_decode(uidb64).decode()
-        friends = Friend.objects.filter()
+        friends = Friend.objects.all()
         for f in friends:
             if f:
                 f.status = "accepted"
@@ -45,6 +44,5 @@ def accept_friend_request(request, uidb64, status):
 def friend_list(request):
     context = {
         'results_from_user': Friend.objects.filter(from_user=request.user),
-        # 'results_to_user': Friend.objects.filter(f)
     }
-    return render(request ,'users/friend_list.html', context)
+    return render(request,'users/friend_list.html', context)
