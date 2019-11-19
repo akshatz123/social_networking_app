@@ -21,31 +21,30 @@ def add_friend_link(request, uidb64):
     return  render(request, 'users/accept_friend.html', {"uid": uidb64, "user": user})
 
 
-@login_required(login_url='/login')
 def accept_friend_request(request, uidb64, status):
-
     """Accept button will lead to entry in database as accepted
     and reject button will lead to entry in database as rejected
     based on status flag"""
-
     try:
-        uid = urlsafe_base64_decode(uidb64).decode()
-        friends = Friend.objects.all()
+        from_uid = urlsafe_base64_decode(uidb64).decode()
+        friends = Friend.objects.filter()
         for f in friends:
             if f:
                 f.status = "accepted"
                 f.save()
-                return render(request, 'users/friend_list.html', {"uidb64": uid, "status":status})
+                return render(request, 'users/friend_list.html', {"uidb64": from_uid, "status":"accepted"})
             else:
                 f.status = "rejected"
                 f.save()
-                return render(request, 'users/friend_list.html', {'uidb64':uid, 'status':status})
+                return render(request, 'users/friend_list.html', {'uidb64':from_uid, 'status':"rejected"})
     except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
 
+@login_required(login_url='login/')
 def friend_list(request):
     context = {
-        'results': Friend.objects.filter(from_user=request.user)
+        'results_from_user': Friend.objects.filter(from_user=request.user),
+        # 'results_to_user': Friend.objects.filter(f)
     }
     return render(request ,'users/friend_list.html', context)
