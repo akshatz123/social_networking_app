@@ -1,8 +1,10 @@
 import random
 
 from django.contrib import messages
+from django.core.handlers import exception
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.utils.deprecation import MiddlewareMixin
 
 from django_project.settings import AUTH_USER_MODEL
 from .models import Posts
@@ -66,6 +68,11 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super(PostCreateView, self).form_valid(form)
+
+    # if isinstance(exception):
+    #         message = "Invalid operation %s" % (exception)
+    #         messages.error(message)
+    #         return RedirectToRefererResponse(request)
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
