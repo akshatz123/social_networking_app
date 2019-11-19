@@ -6,6 +6,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth import get_user_model
 from .models import Friend
+from django.forms.models import model_to_dict
 User = get_user_model()
 
 
@@ -17,27 +18,28 @@ def add_friend_link(request, uidb64):
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    if Friend.to_user == Friend.from_user:
-        redirect ('Friend Request' + Friend.to_user + 'exists')
-    else:
-        return render(request, 'users/accept_friend.html', {"uid": uidb64, "user": user})
+    return  render(request, 'users/accept_friend.html', {"uid": uidb64, "user": user})
 
 
 @login_required(login_url='/login')
 def accept_friend_request(request, uidb64, status):
-    """Accept button will lead to entry in database as accepted and reject button will lead to entry in database as rejected  based on status flag"""
+
+    """Accept button will lead to entry in database as accepted
+    and reject button will lead to entry in database as rejected
+    based on status flag"""
+
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
-        # for i in range (User):
-        f = Friend.objects.all()[0]
-        if f:
-            f.status = "accepted"
-            f.save()
-            return render(request, 'users/friend_list.html', {"uidb64": uid, "status": status})
-        else:
-            f.status = "rejected"
-            f.save()
-            return render(request, 'users/friend_list.html', {'uidb64':uid, 'status':status})
+        friends = Friend.objects.all()
+        for f in friends:
+            if f:
+                f.status = "accepted"
+                f.save()
+                return render(request, 'users/friend_list.html', {"uidb64": uid, "status":status})
+            else:
+                f.status = "rejected"
+                f.save()
+                return render(request, 'users/friend_list.html', {'uidb64':uid, 'status':status})
     except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
