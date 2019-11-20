@@ -1,14 +1,14 @@
 {% extends 'blog/base.html' %}
 {% load static %}
 {% block content %}
-<h1>Status of friend requests</h1>
+<h1>Status of friend requests(sent by me)</h1>
 <table border="1px solid #fff" id = "friends">
     <tr>
         <th>Profile Picture</th>
         <th>Details</th>
         <th>Status</th>
     </tr>
-    {% for result in results %}
+    {% for result in results_from_user %}
     <tr>
         <td>
             <img src="{{result.to_user.profile.image.url}}" class="rounded-circle account-img" alt="Profile Picture">
@@ -22,7 +22,7 @@
             </ul>
         </td>
         {% if result.status == "accepted" %}
-        <td>Added</td>
+        <td>Accepted</td>
         {% elif result.status == "pending" %}
         <td>Pending</td>
         {% elif result.status == "rejected" %}
@@ -33,4 +33,5 @@
 {% endfor %}
 
 </table>
+<h1>Status of Pending Friend Request to be accepted</h1>
 {% endblock  %}

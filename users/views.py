@@ -59,6 +59,7 @@ def activate_account(request, uidb64, token):
     else:
         return render(request, 'users/invalid_link.html')
 
+
 def users_list(request):
     """TO list all friends of a user"""
     users = Profile.objects.exclude(user=request.user)
@@ -141,8 +142,10 @@ def add_friend(request, pk):
     email.send()
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
+    # if Friend.objects.filter(from_user=request.user.email,to_user=to_email).exists:
+    #     return render(request, 'users/friend_list')
+    # else:
     f.save()
-
     return render(request, 'users/sent_friend_request_success.html', context)
 
 
