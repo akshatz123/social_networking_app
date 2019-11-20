@@ -140,13 +140,14 @@ def add_friend(request, pk):
         'uid': urlsafe_base64_encode(force_bytes(user.pk))
     })
     to_email = to_user.email
-    if Friend.to_user == Friend.from_user:
-        return render(request, 'blog/base.html')
+    email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
+    email.send()
+    context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
+    f = Friend(from_user=from_user, to_user=to_user, status="pending")
+    # print(f)
+    if (f.from_user and f.to_user):
+        return render(request, 'users/friend_list.html')
     else:
-        email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
-        email.send()
-        context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
-        f = Friend(from_user=from_user, to_user=to_user, status="pending")
         f.save()
         return render(request, 'users/sent_friend_request_success.html', context)
 
