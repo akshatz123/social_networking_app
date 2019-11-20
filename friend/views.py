@@ -22,17 +22,16 @@ def add_friend_link(request, uidb64, to_user, from_user):
     try:
         from_user = force_bytes(urlsafe_base64_decode(uidb64))
         print(from_user)
-        uid = force_bytes(urlsafe_base64_decode(uidb64))
+        uid  = force_bytes(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
         to_user = force_bytes(urlsafe_base64_decode(uidb64))
         print(to_user)
-        # to_user = User.objects.get(user_id= id)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-    return  render(request, 'users/accept_friend.html', {"uid": from_user, "user": user, 'to_user':to_user})
+    return render(request, 'users/accept_friend.html', {"uid": from_user, "user": user, 'to_user':to_user})
 
 
-def accept_friend_request(request, from_uid,  to_uid):
+def accept_friend_request(request, from_uid,  to_uid, uidb64):
     """Accept button will lead to entry in database as accepted
     and reject button will lead to entry in database as rejected
     based on status flag"""
