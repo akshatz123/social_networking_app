@@ -25,17 +25,19 @@ def accept_friend_request(request, uidb64, status):
     and reject button will lead to entry in database as rejected
     based on status flag"""
     try:
-        from_uid = urlsafe_base64_decode(uidb64).decode()
-        friends = Friend.objects.all()
+        from_user = force_bytes(urlsafe_base64_decode(uidb64))
+        to_user = force_bytes(urlsafe_base64_decode(uidb64))
+        friends = Friend.objects.filter(from_user, to_user)
+        print(to_user)
         for f in friends:
             if f:
                 f.status = "accepted"
                 f.save()
-                return render(request, 'users/friend_list.html', {"uidb64": from_uid, "status":"accepted"})
+                return render(request, 'users/friend_list.html', {"from_user": from_user, "status":status, "to_user": to_user})
             else:
                 f.status = "rejected"
                 f.save()
-                return render(request, 'users/friend_list.html', {'uidb64':from_uid, 'status':"rejected"})
+                return render(request, 'users/friend_list.html', {'from_user': from_user, 'status':status, "to_user":to_user})
     except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
