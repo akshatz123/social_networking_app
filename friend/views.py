@@ -18,6 +18,7 @@ User = get_user_model()
 def add_friend_link(request, uidb64, to_user, from_user):
     """Adding a link  in email which is sent to friend
      through which one can accept or reject friend request"""
+
     try:
         from_user = force_bytes(urlsafe_base64_decode(uidb64))
         print(from_user)
@@ -31,7 +32,7 @@ def add_friend_link(request, uidb64, to_user, from_user):
     return  render(request, 'users/accept_friend.html', {"uid": from_user, "user": user, 'to_user':to_user})
 
 
-def accept_friend_request(request, uidb64, status):
+def accept_friend_request(request, from_uid,  to_uid):
     """Accept button will lead to entry in database as accepted
     and reject button will lead to entry in database as rejected
     based on status flag"""
