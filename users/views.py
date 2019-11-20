@@ -146,7 +146,7 @@ def add_friend(request, pk):
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
     # print(f)
     if (f.from_user and f.to_user):
-        return render(request, 'users/friend_list.html')
+        return render(request, 'friend/friend_list.html')
     else:
         f.save()
         return render(request, 'users/sent_friend_request_success.html', context)
