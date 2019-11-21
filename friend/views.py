@@ -21,6 +21,7 @@ def add_friend_link(request, uidb64):
 
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
+        print(uid)
         user = User.objects.get(pk=request.user.id)
         return render(request, 'friend/accept_friend.html', {"uid": uidb64, "user": user})
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
@@ -34,10 +35,9 @@ def accept_friend_request(request, uidb64, status):
     based on status flag"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64)).decode()
-        print(uid)
-        to_user= request.user.id
-        friends = Friend.objects.filter(uid, to_user)
+        friends = Friend.objects.all()
         for f in friends:
+            print(f)
             if f:
                 f.status = "accepted"
                 f.save()
