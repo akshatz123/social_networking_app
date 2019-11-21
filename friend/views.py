@@ -7,7 +7,6 @@ from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-
 from blog.models import User
 from blog.views import user
 from friend.models import Friend
@@ -22,36 +21,31 @@ def add_friend_link(request, uidb64):
 
     try:
         from_user = force_bytes(urlsafe_base64_decode(uidb64))
-        # print(from_user)
-        import pdb
-        pdb.set_trace()
-        uid  = force_bytes(urlsafe_base64_decode(uidb64))
-        user = User.objects.get(pk=uid)
+        print(from_user)
+        user = User.objects.get(pk=request.user.id)
         to_user = request.user.id
-        return render(request, 'friend/accept_friend', {"uidb64": from_user, "user": user})
+        return render(request, 'friend/accept_friend.html', {"uidb64": from_user, "user": user})
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         return render(request, 'blog/base.html')
 
 
-def accept_friend_request(request, from_uid,  to_uid, uidb64, status):
+def accept_friend_request(request, uidb64, status):
     """Accept button will lead to entry in database as accepted
     and reject button will lead to entry in database as rejected
     based on status flag"""
     try:
-        from_uid = force_bytes(urlsafe_base64_decode(uidb64))
-        print(from_uid)
+        uid = force_bytes(urlsafe_base64_decode(uidb64)).decode()
         friends = Friend.objects.all()
-        print(friends)
         for f in friends:
             if f:
                 f.status = "accepted"
                 f.save()
-                return render(request, 'friend/friend_list.html', {"uidb64":from_uid,"status":status})
+                return render(request, 'friend/friend_list.html', {"uidb64":uid, "status":status})
             else:
                 f.status = "rejected"
                 f.save()
-                return render(request, 'friend/friend_list.html', {'uidb64': from_uid,'status':status})
+                return render(request, 'friend/friend_list.html', {'uidb64':uid,'status':status })
     except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
