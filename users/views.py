@@ -50,7 +50,9 @@ def activate_account(request, uidb64, token):
     """Activate the account for the user using token and uid"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64))
+        # print(uid)
         user = User.objects.get(pk=uid)
+        # print(user)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
@@ -134,7 +136,7 @@ def add_friend(request, pk):
     current_site = get_current_site(request)
     to_user = get_object_or_404(User, pk=pk)
     email_subject = 'Friend Request from ' + name
-    message = render_to_string('users/add_friend.html', {
+    message = render_to_string('friend/add_friend.html', {
         'user': user,
         'domain': current_site.domain,
         'uid': urlsafe_base64_encode(force_bytes(user.pk))
@@ -144,12 +146,12 @@ def add_friend(request, pk):
     email.send()
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
-    # print(f)
-    if (f.from_user and f.to_user):
+
+    if f.from_user and f.to_user and f.from_user == f.to_user:
         return render(request, 'friend/friend_list.html')
     else:
         f.save()
-        return render(request, 'users/sent_friend_request_success.html', context)
+        return render(request, 'friend/sent_friend_request_success.html', context)
 
 
 @login_required(login_url='/login')
