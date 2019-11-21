@@ -20,11 +20,9 @@ def add_friend_link(request, uidb64):
      through which one can accept or reject friend request"""
 
     try:
-        from_user = force_bytes(urlsafe_base64_decode(uidb64))
-        print(from_user)
+        uid = force_bytes(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=request.user.id)
-        to_user = request.user.id
-        return render(request, 'friend/accept_friend.html', {"uidb64": from_user, "user": user})
+        return render(request, 'friend/accept_friend.html', {"uid": uidb64, "user": user})
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         return render(request, 'blog/base.html')
@@ -36,7 +34,9 @@ def accept_friend_request(request, uidb64, status):
     based on status flag"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64)).decode()
-        friends = Friend.objects.all()
+        print(uid)
+        to_user= request.user.id
+        friends = Friend.objects.filter(uid, to_user)
         for f in friends:
             if f:
                 f.status = "accepted"
@@ -45,7 +45,7 @@ def accept_friend_request(request, uidb64, status):
             else:
                 f.status = "rejected"
                 f.save()
-                return render(request, 'friend/friend_list.html', {'uidb64':uid,'status':status })
+                return render(request, 'friend/friend_list.html', {'uidb64':uid,'status':status})
     except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
