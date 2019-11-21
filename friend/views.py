@@ -14,6 +14,7 @@ from friend.models import Friend
 
 User = get_user_model()
 
+
 @login_required(login_url='/login')
 def add_friend_link(request, uidb64):
     """Adding a link  in email which is sent to friend
@@ -22,11 +23,12 @@ def add_friend_link(request, uidb64):
     try:
         from_user = force_bytes(urlsafe_base64_decode(uidb64))
         # print(from_user)
+        import pdb
+        pdb.set_trace()
         uid  = force_bytes(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
         to_user = request.user.id
-        # print(to_user)
-        return render(request, 'friend/accept_friend.html', {"uidb64": from_user, "user": user})
+        return render(request, 'friend/accept_friend', {"uidb64": from_user, "user": user})
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
         return render(request, 'blog/base.html')
@@ -38,18 +40,18 @@ def accept_friend_request(request, from_uid,  to_uid, uidb64, status):
     based on status flag"""
     try:
         from_uid = force_bytes(urlsafe_base64_decode(uidb64))
-        to_uid = force_bytes(urlsafe_base64_decode(uidb64))
-        friends = Friend.objects.filter(from_uid, to_uid)
-        print(to_uid)
+        print(from_uid)
+        friends = Friend.objects.all()
+        print(friends)
         for f in friends:
             if f:
                 f.status = "accepted"
                 f.save()
-                return render(request, 'users/friend_list.html', {"uidb64":from_uid,"status":status})
+                return render(request, 'friend/friend_list.html', {"uidb64":from_uid,"status":status})
             else:
                 f.status = "rejected"
                 f.save()
-                return render(request, 'users/friend_list.html', {'uidb64': from_uid,'status':status})
+                return render(request, 'friend/friend_list.html', {'uidb64': from_uid,'status':status})
     except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
