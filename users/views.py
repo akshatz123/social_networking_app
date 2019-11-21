@@ -146,7 +146,8 @@ def add_friend(request, pk):
     email.send()
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
-    if f.from_user and f.to_user:
+
+    if f.from_user and f.to_user and f.from_user == f.to_user:
         return render(request, 'friend/friend_list.html')
     else:
         f.save()
