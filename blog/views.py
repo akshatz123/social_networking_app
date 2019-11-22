@@ -7,6 +7,7 @@ from django.urls import reverse_lazy
 from django.utils.deprecation import MiddlewareMixin
 
 from django_project.settings import AUTH_USER_MODEL
+from friend.models import Friend
 from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -29,7 +30,7 @@ def home_view(request):
     if  request.user.is_authenticated:
         context = {
             'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
-            'media': MEDIA_URL
+            'media': MEDIA_URL,
         }
         return render(request, 'blog/home.html', context)
     else:
@@ -44,7 +45,7 @@ class PostDetailView(DetailView):
         redirect('/blog')
 
     def get_queryset(self):
-        return Posts.objects.filter(author=self.request.user).order_by('date_posted')
+            return Posts.objects.filter(author=self.request.user).order_by('date_posted')
 
     def get_context_data(self, **kwargs):
         context = super(PostDetailView, self) \

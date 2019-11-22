@@ -1,16 +1,28 @@
 {% extends 'blog/base.html' %}
-{% load crispy_forms_tags %}
+<!--{% load crispy_forms_tags %}-->
 {% block content %}
 	<div class="content-section">
 		<form method="POST" enctype="multipart/form-data">
 			{% csrf_token %}
 			<fieldset class="form-group">
 				<legend class="border-bottom mb-4">Blog Post</legend>
-				{{ form|crispy }}
+				<div class="form-row">
+					{{form.title|as_crispy_field}}
+				</div>
+				<div class="form-row">
+					{{form.content|as_crispy_field}}
+				</div>
+				<div class="form-row">
+
+					{{form.image|as_crispy_field}}
+				</div>
+				<div class="form-row">
+					{{form.video|as_crispy_field}}
+				</div>
+				<div class="form-row">
+					<button type="submit" class="btn btn-outline-info">Post it</button>
+				</div>
 			</fieldset>
-			<div class="form-group">
-				<button class="btn btn-outline-info" type="Submit">Post it</button>
-			</div>
 		</form>
 	</div>
 {% endblock content %}
