@@ -1,11 +1,6 @@
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Column, Submit, Row
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import get_user_model
-
-from blog.fields import PostForm
-
 User = get_user_model()
 
 
@@ -24,9 +19,24 @@ class UserRegisterForm(UserCreationForm):
         model = get_user_model()
         fields = ['email', 'password', 'password2', 'first_name', 'last_name']
 
-
-class PostForm(forms.Form):
-    title= forms.CharField(max_length=500)
-    content = forms.Textarea()
-    image = forms.ImageField(required=False)
-    video = forms.FileField(attrs={'accept':'video/*'})
+# class CustomFieldForm(PostFornm):
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.helper = FormHelper()
+#         self.helper.layout = Layout(
+#             Row(
+#                 Column('email', css_class='form-group col-md-6 mb-0'),
+#                 Column('password', css_class='form-group col-md-6 mb-0'),
+#                 css_class='form-row'
+#             ),
+#             'address_1',
+#             'address_2',
+#             Row(
+#                 Column('city', css_class='form-group col-md-6 mb-0'),
+#                 Column('state', css_class='form-group col-md-4 mb-0'),
+#                 Column('zip_code', css_class='form-group col-md-2 mb-0'),
+#                 css_class='form-row'
+#             ),
+#             CustomCheckbox('check_me_out'),
+#             Submit('submit', 'Sign in')
+#         )
