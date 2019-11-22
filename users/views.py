@@ -147,8 +147,8 @@ def add_friend(request, pk):
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
 
-    if f.from_user and f.to_user and f.from_user == f.to_user:
-        return render(request, 'friend/friend_list.html')
+    if f.from_user and f.to_user or f.from_user == f.to_user:
+        return render(request, 'friend/friend_list.html', context)
     else:
         f.save()
         return render(request, 'friend/sent_friend_request_success.html', context)
