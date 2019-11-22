@@ -5,6 +5,7 @@ from django.core.exceptions import FieldError
 from django.core.mail import EmailMessage
 from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
+from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from blog.models import User
@@ -25,7 +26,7 @@ def add_friend_link(request, uidb64):
         return render(request, 'friend/accept_friend.html', {"uid": uidb64, "user": user})
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
-        return render(request, 'blog/base.html')
+        return render(request, reverse_lazy('list'))
 
 
 def accept_friend_request(request, uidb64, status):
@@ -34,19 +35,20 @@ def accept_friend_request(request, uidb64, status):
     based on status flag"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64)).decode()
-        print("uid" + uid)
+        # print("uid" + uid)
         friends = Friend.objects.all()
-        print("Friends", friends)
+        # print("Friends", friends)
         for f in friends:
-            print(f)
+            # print(f)
             if f:
                 f.status = "accepted"
                 f.save()
-                return render(request, 'friend/friend_list.html', {"uidb64":uid, "status":status})
+                print(f.status)
+                return render(request, 'friend/friend_list.html', {"uidb64":uid, "status":"accepted"})
             else:
                 f.status = "rejected"
                 f.save()
-                return render(request, 'friend/friend_list.html', {'uidb64':uid,'status':status})
+                return render(request, 'friend/friend_list.html', {'uidb64':uid,'status':"rejected"})
     except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
@@ -81,5 +83,6 @@ def add_friend(self, request, pk):
         email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
         context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
         email.send()
+
         f.save()
         return render(request, 'friend/sent_friend_request_success.html', context)

@@ -4,7 +4,10 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.db.models import Q
 from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.template import RequestContext
 from django.template.loader import render_to_string
+from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
@@ -14,8 +17,8 @@ from django_project.settings import MEDIA_URL, AUTH_USER_MODEL
 from friend.models import Friend
 from .token_generator import account_activation_token
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
-from django.contrib.auth import get_user_model, login
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import get_user_model, login, logout, authenticate
+from django.shortcuts import render, get_object_or_404, render_to_response, redirect
 from users.models import Profile
 from django.contrib.auth.decorators import login_required
 
@@ -146,9 +149,8 @@ def add_friend(request, pk):
     email.send()
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
-
     if f.from_user and f.to_user or f.from_user == f.to_user:
-        return render(request, 'friend/friend_list.html', context)
+        return render(request, 'friend/sent_friend_request_success.html')
     else:
         f.save()
         return render(request, 'friend/sent_friend_request_success.html', context)
@@ -162,3 +164,18 @@ def home(request):
         'media': MEDIA_URL
     }
     return render(request, 'blog/home.html', context)
+
+
+def loginpage(request, form):
+    if request.method == 'POST':
+        username = request.POST['username']
+        post = User.objects.filter(username=username)
+        if post:
+            username = request.POST['username']
+            request.session['username'] = username
+            return render(request,'blog/home.html')
+        else:
+            return render(request, 'users/login.html')
+    else:
+        form = form
+        return render(request,"users/login.html", context={"form": form})
