@@ -35,20 +35,16 @@ def accept_friend_request(request, uidb64, status):
     based on status flag"""
     try:
         uid = force_bytes(urlsafe_base64_decode(uidb64)).decode()
-        # print("uid" + uid)
         friends = Friend.objects.all()
-        # print("Friends", friends)
         for f in friends:
             # print(f)
             if f:
                 f.status = "accepted"
                 f.save()
-                print(f.status)
-                return render(request, 'friend/friend_list.html', {"uidb64":uid, "status":"accepted"})
             else:
                 f.status = "rejected"
                 f.save()
-                return render(request, 'friend/friend_list.html', {'uidb64':uid,'status':"rejected"})
+                return render(request, 'friend/friend_list.html', {'uidb64':uid,'status':"rejected", "friends": friends})
     except(FieldError, AttributeError):
         return render(request, 'blog/base.html')
 
