@@ -153,7 +153,7 @@ def add_friend(request, pk):
         return render(request, 'friend/friend_list.html')
     else:
         f.save()
-        return render(request, 'friend/sent_friend_request_success', context)
+        return render(request, 'friend/sent_friend_request_success.html', context)
 
 
 @login_required(login_url='/login')
@@ -164,19 +164,4 @@ def home(request):
         'media': MEDIA_URL
     }
     return render(request, 'blog/home.html', context)
-
-
-def loginpage(request):
-    if request.method == 'POST':
-        email = request.POST['username']
-        password = request.POST['password']
-        # print(email)
-        user = authenticate(request, email=email, password=password)
-        # print(user.email+ "\n" + user.get_full_name())
-        if user is not None:
-            print("IN IF")
-            redirect('blog-home')
-        else:
-            redirect('login')
-    return render(request,"users/login.html",{"form":AuthenticationForm})
 
