@@ -1,5 +1,5 @@
 import datetime
-
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 from django.db.models import Q
@@ -150,10 +150,10 @@ def add_friend(request, pk):
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
     if f.from_user and f.to_user or f.from_user == f.to_user:
-        return render(request, 'friend/sent_friend_request_success.html')
+        return render(request, 'friend/friend_list.html')
     else:
         f.save()
-        return render(request, 'friend/friend_list.html', context)
+        return render(request, 'friend/sent_friend_request_success', context)
 
 
 @login_required(login_url='/login')
@@ -166,15 +166,17 @@ def home(request):
     return render(request, 'blog/home.html', context)
 
 
-# def loginpage(request, form):
-#     if request.method == 'POST':
-#         email = request.POST['username']
-#         password = request.POST['password']
-#         user = authenticate(request, username=email, password=password)
-#         if user is not None:
-#             print("user is none.................")
-#             redirect('home')
-#         else:
-#             return render(request,"blog/home.html")
-#     else:
-#         return redirect('home')
+def loginpage(request):
+    if request.method == 'POST':
+        email = request.POST['username']
+        password = request.POST['password']
+        # print(email)
+        user = authenticate(request, email=email, password=password)
+        # print(user.email+ "\n" + user.get_full_name())
+        if user is not None:
+            print("IN IF")
+            redirect('blog-home')
+        else:
+            redirect('login')
+    return render(request,"users/login.html",{"form":AuthenticationForm})
+
