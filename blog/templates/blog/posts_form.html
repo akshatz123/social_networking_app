@@ -7,10 +7,10 @@
 			<fieldset class="form-group">
 				<legend class="border-bottom mb-4">Blog Post</legend>
 				{{ form|crispy }}
+				<div class="form-row">
+					<button type="submit" class="btn btn-outline-info">Post it</button>
+				</div>
 			</fieldset>
-			<div class="form-group">
-				<button class="btn btn-outline-info" type="Submit">Post it</button>
-			</div>
 		</form>
 	</div>
 {% endblock content %}

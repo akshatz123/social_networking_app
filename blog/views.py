@@ -1,10 +1,13 @@
 import random
 
 from django.contrib import messages
+from django.core.handlers import exception
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy
+from django.utils.deprecation import MiddlewareMixin
 
 from django_project.settings import AUTH_USER_MODEL
+from friend.models import Friend
 from .models import Posts
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -21,17 +24,19 @@ from django.contrib.auth.decorators import login_required
 
 user = get_user_model()
 
+
 @login_required
 def home_view(request):
     """Display all the post of friends and own posts on the dashboard"""
-    if  request.user.is_authenticated:
+    if request.user.is_authenticated:
         context = {
             'posts': Posts.objects.filter(author=request.user).order_by('-date_posted'),
-            'media': MEDIA_URL
+            'media': MEDIA_URL,
         }
         return render(request, 'blog/home.html', context)
     else:
         return render(request, 'users/login.html')
+
 
 class PostDetailView(DetailView):
     """Options to Update, delete the post"""
@@ -64,8 +69,11 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     success_url = '/blog'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super(PostCreateView, self).form_valid(form)
+        try:
+            form.instance.author = self.request.user
+            return super(PostCreateView, self).form_valid(form)
+        except:
+            return redirect(reverse_lazy('home'))
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -80,10 +88,14 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     success_url = '/blog'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
-        super(PostUpdateView, self).form_valid(form)
-        messages.success(self.request, 'You have successfully updated the post')
-        return redirect(reverse_lazy('post-update', kwargs={'pk': self.object.uuid}))
+        try:
+            form.instance.author = self.request.user
+            super(PostUpdateView, self).form_valid(form)
+            messages.success(self.request, 'You have successfully updated the post')
+            return redirect(reverse_lazy('post-update', kwargs={'pk': self.object.uuid}))
+        except:
+            messages.success(self.request, 'You have successfully updated the post')
+            return redirect(reverse_lazy('post-update', kwargs={'pk': self.object.uuid}))
 
     def test_func(self):
         post = self.get_object()
@@ -104,9 +116,9 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
 
 
-def about(request):
-    """About page forthe company"""
-    return render(request, 'blog/about.html', {'title': 'About'})
+# def about(request):
+#     """About page forthe company"""
+#     return render(request, 'blog/about.html', {'title': 'About'})
 
 
 class UserPostListView(ListView):
@@ -120,10 +132,3 @@ class UserPostListView(ListView):
     def get_queryset(self):
         user = get_object_or_404(AUTH_USER_MODEL, username=self.kwargs.get('pk'))
         return Posts.objects.filter(author=user).order_by('-date_posted')
-
-
-# def post_draft_list(request):
-#     posts = Posts.objects.all().order_by('created_date')
-#     return render(request, 'blog/post_draft_list.html', {'posts': posts})
-
-
