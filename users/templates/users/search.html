@@ -22,8 +22,8 @@
         <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }}</td>
         <td>{{result.email}}</td>
         <td>
-            {% if friend.from_user and friend.to_user or (friend.from_user==friend.to_user) %}
-            <a href="{% url 'addfriend'  %}">Add Friend</a>
+<!--            {% if friend.from_user and friend.to_user or (friend.from_user==friend.to_user)%}-->
+            <a href="{% url 'addfriend' my_id %}">Add Friend</a>
         </td>
         {%endif%}
     </tr>
