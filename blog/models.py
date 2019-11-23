@@ -3,8 +3,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from PIL import Image
-
-from .validators import validate_file_extension
 from django_project.settings import AUTH_USER_MODEL
 import uuid
 
@@ -43,7 +41,7 @@ class Posts(models.Model):
     author = models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE)
     image = models.ImageField(upload_to="profile_pics", null=True, blank=True, verbose_name="Image:")
     date_modified = models.DateTimeField(auto_now=True, blank=True)
-    video = models.FileField(upload_to='videos/',blank=True, null=True, verbose_name="video limited to mp4:",  validators=[validate_file_extension])
+    video = models.FileField(upload_to='videos/',blank=True, null=True, verbose_name="video limited to mp4:")
     likes = models.ManyToManyField(User, related_name='likes', blank=True)
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     draft = models.BooleanField(default=False)

@@ -3,6 +3,7 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
+    path('<int:pk>', add_friend, name='addfriend'),
     path('profile/', profile, name='profile'),
     path('search/', search, name='friends_search'),
     path('profile/<int:pk>', profile_detail, name='profile'),
