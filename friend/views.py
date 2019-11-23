@@ -73,11 +73,11 @@ def add_friend(self, request, pk):
     })
     to_email = to_user.email
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
+    context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
     if f.from_user or f.to_user and f.to_user == f.from_user:
-        return render(request, 'friend/friend_list.html')
+        return render(request, 'friend/friend_list.html', context)
     else:
         email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
-        context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
         email.send()
 
         f.save()
