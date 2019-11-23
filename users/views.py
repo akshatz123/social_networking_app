@@ -75,32 +75,35 @@ def users_list(request):
     }
     return render(request, "home.html", context)
 
+
 def profile(request):
     """Profile to view the profile"""
-    if request.method == 'POST':
-        u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-        if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
-            p_form.save()
-            msg = 'Your account has been successfully updated!'
-            messages.success(request, msg)
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            u_form = UserUpdateForm(request.POST, instance=request.user)
+            p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+            if u_form.is_valid() and p_form.is_valid():
+                u_form.save()
+                p_form.save()
+                msg = 'Your account has been successfully updated!'
+                messages.success(request, msg)
+                return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
+        else:
+            u_form = UserUpdateForm(instance=request.user)
+            p_form = ProfileUpdateForm(instance=request.user)
             return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
-    else:
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user)
-        return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
 
 
 def search(request):
+    # print("IN SEARCH")
     """Search feature used to search friends """
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None and request.user:
             results = User.objects.filter(Q(username=query) | Q(first_name=query) | Q(last_name=query))
-            return render(request, 'users/search.html', {'results': results, 'media': MEDIA_URL})
+            print(request.user.id)
+            return render(request, 'users/search.html', {'results': results, 'media': MEDIA_URL, "my_id":request.user.id})
         return render(request, 'base.html')
-
 
 def search_profile(request, pk):
     """User search Profile"""
@@ -113,7 +116,6 @@ def search_profile(request, pk):
             return render(request, 'users/profile.html', dict(u_form=u_form, p_form=p_form))
     else:
         return render(request, 'users/search_profile.html')
-
 
 def profile_detail(request, pk):
     user = get_object_or_404(User, pk=pk)
@@ -130,30 +132,6 @@ def profile_detail(request, pk):
     else:
         return render(request, 'users/search_profile.html', context)
 
-
-@login_required(login_url='login/')
-def add_friend(request, pk):
-    """Sending friend request to email"""
-    name = request.user.first_name
-    from_user = get_object_or_404(User, id=request.user.id)
-    current_site = get_current_site(request)
-    to_user = get_object_or_404(User, pk=pk)
-    email_subject = 'Friend Request from ' + name
-    message = render_to_string('friend/add_friend.html', {
-        'user': user,
-        'domain': current_site.domain,
-        'uid': urlsafe_base64_encode(force_bytes(user.pk))
-    })
-    to_email = to_user.email
-    email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
-    email.send()
-    context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
-    f = Friend(from_user=from_user, to_user=to_user, status="pending")
-    if f.from_user and f.to_user or f.from_user == f.to_user:
-        return render(request, 'friend/friend_list.html')
-    else:
-        f.save()
-        return render(request, 'friend/sent_friend_request_success.html', context)
 
 
 @login_required(login_url='/login')
