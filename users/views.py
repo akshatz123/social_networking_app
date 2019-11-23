@@ -95,13 +95,12 @@ def profile(request):
 
 
 def search(request):
-    # print("IN SEARCH")
     """Search feature used to search friends """
     if request.method == 'GET':
         query = request.GET.get('q')
         if query is not None and request.user:
             results = User.objects.filter(Q(username=query) | Q(first_name=query) | Q(last_name=query))
-            print(request.user.id)
+            # print(request.user.id)
             return render(request, 'users/search.html', {'results': results, 'media': MEDIA_URL, "my_id":request.user.id})
         return render(request, 'base.html')
 

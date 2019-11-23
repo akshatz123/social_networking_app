@@ -3,9 +3,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import FieldError
 from django.core.mail import EmailMessage
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import render_to_string
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from blog.models import User
@@ -77,8 +78,7 @@ def add_friend(request, pk):
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
     if (f.from_user and f.to_user or (f.to_user == f.from_user)):
-        return render(request, 'friend/friend_list.html', context)
-        # redirect(reverse_lazy('friend_list'))
+        return HttpResponseRedirect(reverse(friend_list))
     else:
         email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
         email.send()
