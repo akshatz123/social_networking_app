@@ -20,9 +20,9 @@ User = get_user_model()
 def friend_list(request):
     context = {
         'results_from_user': Friend.objects.filter(from_user=request.user),
-        'result_to_user': Friend.to_user
+        'results_to_user': Friend.to_user
     }
-    print(context)
+    # print(context)
     return render(request, 'friend/friend_list.html', context)
 
 
@@ -78,12 +78,9 @@ def add_friend(request, pk):
     to_email = to_user.email
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
-    if not ((f.from_user and f.to_user) or (f.from_user == f.to_user)):
-        print(f.from_user)
-        print(f.to_user)
+    if (f.from_user and f.to_user) or (f.from_user == f.to_user):
         return HttpResponseRedirect(reverse(friend_list))
     else:
-        # print("IN ELSE")
         email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
         email.send()
         f.save()
