@@ -22,6 +22,7 @@ def friend_list(request):
         'results_from_user': Friend.objects.filter(from_user=request.user),
         'result_to_user': Friend.to_user
     }
+    print(context)
     return render(request, 'friend/friend_list.html', context)
 
 
@@ -51,7 +52,7 @@ def accept_friend_request(request, uidb64, status):
             if f:
                 f.status = "accepted"
                 f.save()
-                redirect(reverse_lazy('list'))
+                return render(request, 'friend/friend_list.html')
             else:
                 f.status = "rejected"
                 f.save()
@@ -82,7 +83,7 @@ def add_friend(request, pk):
         print(f.to_user)
         return HttpResponseRedirect(reverse(friend_list))
     else:
-        print("IN ELSE")
+        # print("IN ELSE")
         email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
         email.send()
         f.save()
