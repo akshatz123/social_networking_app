@@ -11,7 +11,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from blog.models import User
 from blog.views import user
-from friend.models import Friend
+from friend.models import Friend, Share
 
 User = get_user_model()
 
@@ -20,8 +20,9 @@ User = get_user_model()
 def friend_list(request):
     context = {
         'results_from_user': Friend.objects.filter(from_user=request.user),
-        'result_to_user': Friend.to_user
+        'results_to_user': Friend.to_user
     }
+    # print(context)
     return render(request, 'friend/friend_list.html', context)
 
 
@@ -77,11 +78,15 @@ def add_friend(request, pk):
     to_email = to_user.email
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
-    if (f.from_user and f.to_user or (f.to_user == f.from_user)):
+    email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
+    email.send()
+    if (f.from_user and f.to_user) or (f.from_user == f.to_user):
         return HttpResponseRedirect(reverse(friend_list))
     else:
-        email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
-        email.send()
         f.save()
         return render(request, 'friend/sent_friend_request_success.html', context)
 
+
+def sharing_of_post(request):
+    if Friend.status == 'accepted':
+        return render(request,'blog/home.html')
