@@ -11,7 +11,7 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from blog.models import User
 from blog.views import user
-from friend.models import Friend
+from friend.models import Friend, Share
 
 User = get_user_model()
 
@@ -87,3 +87,6 @@ def add_friend(request, pk):
         return render(request, 'friend/sent_friend_request_success.html', context)
 
 
+def sharing_of_post(request):
+    if Friend.status == 'accepted':
+        return render(request,'blog/home.html')
