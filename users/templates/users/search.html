@@ -22,7 +22,7 @@
         <td><a href="{% url 'profile' result.id %}">{{result.first_name}} {{ result.last_name }}</a></td>
         <td>{{result.email}}</td>
         <td>
-            <a href="{% url 'addfriend'  my_id %}">Add Friend</a>
+            <a href="{% url 'addfriend'  result.id %}">Add Friend</a>
         </td>
         {%endif%}
     </tr>
