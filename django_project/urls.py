@@ -37,11 +37,6 @@ urlpatterns = [
     path('blog/', include('blog.urls')),
     path('users/', include('users.urls'), name='users'),
     path('friend/', include('friend.urls'), name='users'),
-    # path('login/', user_views.loginpage,
-    #      kwargs={
-    #         "form": 'form'
-    #      },
-    #      name='login'),
 ]
 
 

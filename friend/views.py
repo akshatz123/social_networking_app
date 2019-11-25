@@ -51,7 +51,7 @@ def accept_friend_request(request, uidb64, status):
             if f:
                 f.status = "accepted"
                 f.save()
-                return render(request, 'friend/friend_list.html')
+                redirect(reverse_lazy('list'))
             else:
                 f.status = "rejected"
                 f.save()
@@ -77,11 +77,15 @@ def add_friend(request, pk):
     to_email = to_user.email
     f = Friend(from_user=from_user, to_user=to_user, status="pending")
     context = {'name': name, 'first_name': to_user.first_name, 'last_name': to_user.last_name}
-    if (f.from_user and f.to_user or (f.to_user == f.from_user)):
+    if not ((f.from_user and f.to_user) or (f.from_user == f.to_user)):
+        print(f.from_user)
+        print(f.to_user)
         return HttpResponseRedirect(reverse(friend_list))
     else:
+        print("IN ELSE")
         email = EmailMessage(email_subject, message, from_user.email, to=[to_email])
         email.send()
         f.save()
         return render(request, 'friend/sent_friend_request_success.html', context)
+
 
